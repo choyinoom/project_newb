@@ -29,7 +29,7 @@
     
         <script id="js-repo-breadcrumb" type="text/javascript" th:inline="javascript">
         	let tree_path = document.querySelector("#path");
-       		if (tree_path !== undefined) {
+       		if (tree_path !== null) {
 
             	let tree_path_children = tree_path.children.item(0);
             	let template = tree_path_children.innerHTML.trim();
