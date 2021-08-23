@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!----- css ------>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}">
+    <title>Sign in to itHub - itHub</title>
+    <style>
+        .application-main {
+            padding-top:40px;
+        }
+
+        .auth-form {
+            margin: 0 auto;
+            width: 340px;
+        }
+
+        .auth-form-header {
+            margin-bottom: 15px;
+            text-align:center;
+        }
+
+        .auth-form-header h1 {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: -.5px;
+        }
+
+        .auth-form-body {
+            background-color: #f6f8fa;
+            border: 1px solid #ebedef;
+            border-radius: 6px;
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        .auth-form-body .input-block {
+            margin-bottom: 15px;
+            margin-top: 5px;
+        }
+
+        .auth-form label {
+            display: block;
+            font-weight: 400px;
+            margin-bottom: 7px;
+            text-align: left;
+        }
+
+        .input-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .auth-form-body .label-link {
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <div class="application-main">
+        <main id="container">
+            <div class="auth-form px-3" id="login">
+                <div class="auth-form-header p-0">
+                    <h1>Sign in to itHub</h1>
+                </div>
+                <!-- 로그인 실패 시 생성-->
+                <div th:if="${param.error}">
+                    Invalid username and password.
+                </div>        
+                <div class="auth-form-body mt-3">
+                    <form th:action="@{/login}" accept-charset="UTF-8" method="post">
+                        <label for="login_field"> Username or email address </label>
+                        <input type="text" name="username" id="login_field" autocapitalize="off" autocorrect="off" autocomplete="username" class="input-block">
+                        <div class="position-relative">
+                            <label for="password"> Password </label>
+                            <input type="password" name="password" id="password" autocomplete="current-password" class="input-block d-block">
+                            <input type="submit" name="commit" value="Sign in" class="btn btn-success w-100">
+                            <a class="label-link position-absolute top-0 end-0" tabindex="0" href="#">Forgot password?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

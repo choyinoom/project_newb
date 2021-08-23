@@ -1,0 +1,102 @@
+body {
+    background-color: #fff;
+    color: #24292e;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+a {
+    text-decoration: none;
+}
+
+b, strong {
+    font-weight: 600;
+}
+
+nav {
+    box-shadow: inset 0 -1px 0 #ebedef;
+}
+
+.form-group {
+    padding-top: 3px;
+}
+
+.form-checkbox {
+    margin: 15px 0;
+    padding-left: 20px;
+    vertical-align: middle;
+}
+
+.form-checkbox input[type=checkbox], .form-checkbox input[type=radio] {
+    float: left;
+    margin: 5px 0 0 -20px;
+    vertical-align: middle;
+}
+
+.page-header-bg { /* header from repository page */
+    background-color: #fafbfc;
+}
+
+.nav-item {
+    font-size: 14px;
+}
+
+.nav-item .active {
+    font-weight: 600;
+}
+
+.nav-link {
+	color: #24292e;
+}
+
+.gutter-condensed>[class*=col-] {
+    padding-left: 8px!important;
+    padding-right: 8px!important;
+}
+
+.btn {
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    font-weight: 500;
+    line-height: 20px;
+    vertical-align: center;
+    
+}
+
+.btn-light { /* light color button from repository page */
+    color: #24292e;
+    border-color: #d1d2d2e9;
+}
+
+.flex-1 {
+	flex: 1 !important;
+}
+
+@media (min-width: 1012px) {
+    .px-lg-5 {
+        padding-right: 32px !important;
+        padding-left: 32px !important;
+    }
+    
+    .gutter-lg {
+        padding-left: -16px;
+        padding-right: -16px;
+    }
+
+    .gutter-lg>[class*=col-] {
+        padding-left: 16px!important;
+        padding-right: 16px!important;
+    }
+}
+
+@media (min-width: 768px)  {
+    .px-md-4 {
+        padding-right: 24px !important;
+        padding-left: 24px !important;
+    }
+
+    .gutter-condensed {
+        padding-left: -8px;
+        padding-right: -8px;
+    }
+}

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="../../static/css/common.css" th:href="@{/css/common.css}" />
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.0.min.js}"></script>
+    <title th:text="@{|${projectName}|}"></title>
+    
+    <style>
+    
+        ::selection {
+          background-color: #fd7e14; /*Highlight Color*/
+          color: #fff; /*Text Color*/
+        }
+        .file-content.code .line-numbers {
+            padding: 10px;
+            text-align: right;
+            float: left;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .file-content.code .line-numbers a {
+            font-family: "Menlo", "DejaVu Sans Mono", "Liberation Mono", "Consolas", "Ubuntu Mono", "Courier New", "andale mono", "lucida console", monospace;
+            display: flex;
+            justify-content: flex-end;
+            font-size: 90% !important;
+            white-space: nowrap;
+        }
+
+        .file-content.code pre {
+            padding: 10px 0;
+            border: 0;
+            border-radius: 0 0 4px;
+            font-family: "Menlo", "DejaVu Sans Mono", "Liberation Mono", "Consolas", "Ubuntu Mono", "Courier New", "andale mono", "lucida console", monospace;
+            font-size: 90%;
+            line-height: 1.5;
+            margin: 0;
+            overflow: auto;
+            overflow-y: hidden;
+            white-space: pre;
+            word-wrap: normal;
+            border-left: 1px solid;
+        }
+        
+        .file-content.code pre code {
+            display: inline-block;
+            min-width: 100%;
+            font-family: "Menlo", "DejaVu Sans Mono", "Liberation Mono", "Consolas", "Ubuntu Mono", "Courier New", "andale mono", "lucida console", monospace;
+            white-space: normal;
+            word-wrap: normal;
+            padding: 0;
+        }
+        
+        
+        .file-content.code pre code .line {
+            display: block;
+            width: 100%;
+            padding-left: 10px;
+            padding-right: 10px;
+            white-space: pre;
+        } 
+        
+        
+        .file-content.code pre .line,
+        .file-content.code .line-numbers a {
+            font-size: 0.8125rem;
+            line-height: 1.1875rem;
+            min-height: 1.1875rem;
+        }
+        
+        .memo {
+            position: absolute;
+            display:none;
+        }
+        
+             
+         
+    </style>
+</head>
+<body>
+    <main id="page-container">
+        <div th:replace="fragments/header :: header"></div>
+        <div class="container-xl clearfix px-3 px-md-4 px-lg-5">
+            <div class="repository-content">
+                <div th:replace="fragments/repo-breadcrumb :: repo-breadcrumb"></div>
+                <div class="blob-viewer">
+                    <div class="file-content code" id="blob-content">
+                        <div class="line-numbers">
+                            <a th:each="line, iStat : ${content}" th:id="|L${iStat.index+1}|" >
+                                <span th:text="${iStat.index+1}"></span>
+                            </a>
+                            
+                        </div>
+                        <div class="blob-content">
+                            <pre class="code highlight">
+<code>
+<span th:each="line, iStat : ${content}" th:id="|LC${iStat.index+1}|" class="line"><span class="nn" th:text="${line}"></span></span>
+</code>
+                            </pre>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <a tabindex=0 class="btn btn-sm btn-warning memo" role="button" title="awesome">
+        👀
+        </a>
+    </main>
+
+</body>
+<script type="text/javascript" th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script type="text/javascript">
+   $(function() {
+      
+	   let div = document.createElement('div');
+	   const innerHTML =
+	   		`<form method="post"> 
+				<textarea id="story" name="story" row="5" cols="33" placeholder="Write your opinion"> 
+				</textarea>
+				<input name="submit" type="submit" value="저장">
+				<input name="cancle" type="button" value="취소">
+			</form>`;	
+	   	
+	   div.innerHTML = innerHTML.trim();
+	   
+	 
+	  
+	   let popoverEl = document.querySelector('.memo');
+	   let popover = new bootstrap.Popover(popoverEl, {
+		   placement : 'bottom',
+			html: true,
+			content: div
+	   });
+	   popoverEl.addEventListener('shown.bs.popover', function() {
+		   let cancleBtn = document.querySelector('input[name="cancle"]');
+		   cancleBtn.addEventListener('click', e => {
+			   popover.hide();
+		   });
+	   });
+   			
+		
+		
+	});  
+		
+		
+   
+   	
+   	
+	
+	
+	
+    function gText(e) {
+    	var cur_t = (document.all) ? document.selection.createRange().text : document.getSelection();
+        var rect = e.target.getBoundingClientRect();
+        //console.log(rect.left, window.scrollX, e.screenX, e.clientX);
+        draw(e.clientX, rect.top + window.scrollY);
+        
+    }
+    
+    function hideBtn(e) {
+    	if(e.target.classList.contains("memo") // 버튼 자체를 누르거나
+    			|| e.target.parentNode.tagName === "FORM") // popover일 경우,
+    		return;
+    	let memoBtn = document.querySelector(".memo");
+        memoBtn.style.display = "none";
+        let popover = bootstrap.Popover.getInstance(document.querySelector(".popover")).hide();
+    }
+    
+    let drag = false;
+    document.addEventListener('mousedown', () => drag = false);
+    document.addEventListener('mousemove', () => drag = true);
+    document.addEventListener('mouseup', (e) => drag? gText(e) : hideBtn(e));
+    
+    function draw(left, top) {
+    	var memoBtn = document.querySelector(".memo");
+        memoBtn.style.display = "inline-block"
+        memoBtn.style.left = `${left}px`;
+    	memoBtn.style.top = `${top}px`;
+    	memoBtn.style.margin = '10px';
+    }
+    
+    
+</script>
+</html>
