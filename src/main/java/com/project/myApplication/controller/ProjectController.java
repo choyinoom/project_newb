@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,14 +27,15 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.project.myApplication.ConfigProperties;
 import com.project.myApplication.domain.MyFile;
 import com.project.myApplication.domain.Project;
 import com.project.myApplication.repository.ProjectRepository;
 import com.project.myApplication.service.ObjectStorageService;
+import com.project.myApplication.service.ProjectService;
 import com.project.myApplication.util.FileMap;
 import com.project.myApplication.util.FileUtil;
 
+import com.project.myApplication.PropertiesConfig;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
@@ -41,13 +44,18 @@ import org.apache.commons.lang3.StringUtils;
 @Controller
 public class ProjectController {
 
-	@Autowired
-    private ProjectRepository projectRepository;
-    @Autowired
-    private ObjectStorageService storageService;
-    @Autowired
-    private ConfigProperties config;
 
+	private final ProjectService projectService;
+	private final ObjectStorageService objectStorageService;
+	private final PropertiesConfig propertiesConfig;
+	
+	@Autowired
+	public ProjectController(ProjectService projectService, ObjectStorageService objectStorageService, PropertiesConfig propertiesConfig) {
+		this.projectService = projectService;
+		this.objectStorageService = objectStorageService;
+		this.propertiesConfig = propertiesConfig;
+	}
+	
     
     /**
      * 레파지토리 엔트리 페이지 view 반환
@@ -59,13 +67,23 @@ public class ProjectController {
     @GetMapping("/users/{owner}/{projectName}")
     public String repository(@PathVariable String owner, @PathVariable String projectName, Model model) {
         
-    	Project project = projectRepository.findByName(owner, projectName);
-    	model.addAttribute(project);
-    	
-    	String path = getProjectRootURL(owner, projectName);
-    	List<FileMap> entry = FileUtil.getInstance().listDirectory(path);	
-    	model.addAttribute("entry", entry);
-        return "web/project";
+    	String viewName = "";
+    	try {
+    		Project project = projectService.findByOwnerAndName(owner, projectName);
+    		log.debug("this is fetch result from repository= {}", project);
+    		model.addAttribute(project);
+    		String path = getProjectRootURL(owner, projectName);
+        	List<FileMap> entry = FileUtil.getInstance().listDirectory(path);	
+        	model.addAttribute("entry", entry);
+        	
+        	viewName = viewName + "web/project";
+    	} catch (NoSuchElementException e) {
+    		viewName = viewName + "error/404";
+    	} catch (Exception e) {
+    		log.error("unknown error", e);
+    	}
+
+        return viewName;
     }
     
 
@@ -83,7 +101,7 @@ public class ProjectController {
     		HttpServletRequest request,
     		Model model) {
     	
-    	Project project = projectRepository.findByName(owner, projectName);
+    	Project project = projectService.findByOwnerAndName(owner, projectName);
     	model.addAttribute(project);
 
     	String root = getProjectRootURL(owner, projectName);
@@ -139,11 +157,16 @@ public class ProjectController {
     @PostMapping("/new")
     public String create(Project project, RedirectAttributes redirectAttributes) {
         
-        Project savedProject = projectRepository.save(project);
-        log.debug("status={}, owner={}", savedProject, savedProject.getOwner());
-        redirectAttributes.addAttribute("projectName", savedProject.getName());
-        redirectAttributes.addAttribute("owner",savedProject.getOwner());
-        return "redirect:/user/{owner}/{projectName}";
+    	try {
+    		Long id = projectService.add(project);
+            redirectAttributes.addAttribute("projectName", project.getName());
+            redirectAttributes.addAttribute("owner",project.getOwner());
+            redirectAttributes.addAttribute("status", true);
+            return "redirect:/users/{owner}/{projectName}";
+    	} catch (IllegalStateException e) {
+    		redirectAttributes.addAttribute("status", false);
+    		return "redirect:/new";
+    	}
     }
     
     
@@ -193,7 +216,7 @@ public class ProjectController {
     		map.put("projectName", projectName);
     		map.put("path", path);
     		map.put("file", file);
-    		storageService.save(map);
+    		objectStorageService.save(map);
     		
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -213,7 +236,7 @@ public class ProjectController {
     }
     
     private String getProjectRootURL(String owner, String projectName) {
-    	final String prefix = config.getStorageRoot();
+    	final String prefix = propertiesConfig.getStorageRoot();
     	return String.format(prefix+"%s/%s/", owner, projectName);
     }
     

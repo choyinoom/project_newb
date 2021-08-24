@@ -1,50 +1,14 @@
 package com.project.myApplication.repository;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
-
-import org.springframework.stereotype.Repository;
+import java.util.List;
+import java.util.Optional;
 
 import com.project.myApplication.domain.Project;
 
-@Repository
-public class ProjectRepository {
+public interface ProjectRepository {
 
-	private static Map<String, Map<String, Project>> store = new ConcurrentHashMap<>();
-	private static AtomicLong sequence = new AtomicLong(0);
-	
-	public Project save(Project project) {
-		project.setId(sequence.getAndIncrement());
-		String owner = project.getOwner();
-		Map<String, Project> projects = findByOwner(owner); // Map<������Ʈ �̸�, ������Ʈ>
-		
-		if(projects == null) {
-			projects = new HashMap<>();
-		}
-		projects.put(project.getName(), project);
-		store.put(owner, projects);
-		return project;
-	}
-	
-	
-	public Map<String, Project> findByOwner(String owner) {
-		return store.get(owner);
-	}
-	
-	
-	public Project findByName(String owner, String name) {
-		Map<String, Project> map = store.get(owner);
-		Project project = map.get(name);
-		return project;
-	}
-	
-	public AtomicLong getSequence() {
-		return sequence;
-	}
-	
-	public void clearStore() {
-        store.clear();
-    }
+	Project save(Project project);
+	Optional<Project> findById(Long id);
+	List<Project> findByOwner(String owner);
+	Optional<Project> findByOwnerAndName(String owner, String name);
 }

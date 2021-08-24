@@ -10,9 +10,9 @@ import lombok.Getter;
 
 
 @Configuration
-@PropertySource(value="config.properties", ignoreResourceNotFound = true)
+@PropertySource(value="classpath:config.properties", ignoreResourceNotFound = true)
 @Getter
-public class ConfigProperties {
+public class PropertiesConfig {
 	
 	@Value("${storage.root}")
 	private String storageRoot;
