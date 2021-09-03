@@ -9,7 +9,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.xml.bind.DatatypeConverter;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,17 +69,24 @@ public class FileUtil {
 		return lines;
 	}
 	
+	private static byte[] toByteArray(String s) {
+	    return DatatypeConverter.parseHexBinary(s);
+	}
+	
 	public static void main(String[] args) {
-		String path = "D:\\choyi\\first-project\\index.js";
-		FileUtil util = new FileUtil();
-		util.listDirectory(path);
-		List<String> lines = util.readFile(path);
-		int count=0;
-		for(String line:lines) {
-			System.out.println(line.length());
-			System.out.println(line);
-			count++;
-			if(count > 5) break;
-		}
+//		String path = "D:\\choyi\\first-project\\index.js";
+//		FileUtil util = new FileUtil();
+//		util.listDirectory(path);
+//		List<String> lines = util.readFile(path);
+//		int count=0;
+//		for(String line:lines) {
+//			System.out.println(line.length());
+//			System.out.println(line);
+//			count++;
+//			if(count > 5) break;
+//		}
+
+		byte[] b = toByteArray("268371bca93408f8a903e574d0b185c7f93b9686");
+		System.out.println(Arrays.toString(b));
 	}
 }

@@ -7,11 +7,11 @@ import javax.persistence.EntityManager;
 
 import com.project.myApplication.domain.FileMetadata;
 
-public class JpaMyFileRepository implements FileMetadataRepository{
+public class JpaFileMetadataRepository implements FileMetadataRepository{
 
 	private final EntityManager em;
 	
-	public JpaMyFileRepository(EntityManager em) {
+	public JpaFileMetadataRepository(EntityManager em) {
 		this.em = em;
 	}
 	

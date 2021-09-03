@@ -1,44 +1,30 @@
 package com.project.myApplication.controller;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.project.myApplication.domain.MyFile;
+import com.project.myApplication.PropertiesConfig;
 import com.project.myApplication.domain.Project;
-import com.project.myApplication.repository.ProjectRepository;
 import com.project.myApplication.service.ObjectStorageService;
 import com.project.myApplication.service.ProjectService;
 import com.project.myApplication.util.FileMap;
 import com.project.myApplication.util.FileUtil;
 
-import com.project.myApplication.PropertiesConfig;
 import lombok.extern.slf4j.Slf4j;
-
-import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 @Controller
@@ -170,71 +156,6 @@ public class ProjectController {
     }
     
     
-    
-    /**
-     * 레파지토리에 새로운 파일을 추가하기 위한 폼을 반환
-     * @param owner
-     * @param projectName
-     * @param model
-     * @return
-     */
-    @GetMapping("/users/{owner}/{projectName}/upload")
-    public String uploadForm(@PathVariable String owner, @PathVariable String projectName, Model model) {
-    	model.addAttribute("upload-id", System.currentTimeMillis());
-    	model.addAttribute(owner);
-    	model.addAttribute(projectName);
-    	return "web/uploadForm";
-    }
-    
-    
-    /**
-     * 레파지토리에 새로운 파일을 추가하기 위한 post 요청 처리
-     * @param owner
-     * @param projectName
-     * @param file
-     * @param path
-     * @return
-     */
-    @PostMapping("/users/{owner}/{projectName}/upload")
-    @ResponseBody
-    public String uploadFiles(
-    		@PathVariable String owner, 
-    		@PathVariable String projectName, 
-    		@RequestParam MultipartFile file,
-    		@RequestParam("full_path") String path) {
-    	
-
-    	try {
-
-    		log.debug("Uploaded file Name={}, {}, {}, {}" ,
-					file.getOriginalFilename(),
-					file.getSize(),
-					file.getBytes(),
-					path);
-    		Map<String, Object> map = new HashMap<>();
-    		map.put("owner", owner);
-    		map.put("projectName", projectName);
-    		map.put("path", path);
-    		map.put("file", file);
-    		objectStorageService.save(map);
-    		
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    	return "ok";
-    }
-    
-    @DeleteMapping("/users/{owner}/{projetName}/upload")
-    @ResponseBody
-    public String deleteFiles(
-    		@PathVariable String owner,
-    		@PathVariable String projectName,
-    		@RequestParam("file_id") String id) {
-    	log.debug("Please remove this file from server ={}", id);
-    	return "ok";
-    }
-    
     private String getProjectRootURL(String owner, String projectName) {
     	final String prefix = propertiesConfig.getStorageRoot();
     	return String.format(prefix+"%s/%s/", owner, projectName);
@@ -247,13 +168,5 @@ public class ProjectController {
     	String processed = orgRequest.substring(fifthSlash+1);
     	return processed;
     }
-    	
     
-    @GetMapping("/test")
-    public ModelAndView test(HttpServletRequest request, HttpServletResponse respsonse) {
-    	ModelAndView model = new ModelAndView();
-    	model.addObject("this", "test");
-    	model.addObject("entry", "entry");
-    	return model;
-    }
 }

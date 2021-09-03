@@ -16,6 +16,10 @@ public class PropertiesConfig {
 	
 	@Value("${storage.root}")
 	private String storageRoot;
+	@Value("${storage.tmp}")
+	private String storageTmp;
+	@Value("${storage.home}")
+	private String storageHome;
 	
 	@Bean
 	public static PropertySourcesPlaceholderConfigurer propertySourcePlaceHolderCongifurer() {
