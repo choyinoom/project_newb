@@ -44,7 +44,6 @@ public class JpaProjectRepository implements ProjectRepository{
 				.setParameter(1, owner)
 				.setParameter(2, name)
 				.getResultList();
-		log.error("result size={}", result.size());
 		return result.stream().findAny();
 	}
 

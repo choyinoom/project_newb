@@ -6,7 +6,9 @@ import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.project.myApplication.repository.FileMetadataRepository;
 import com.project.myApplication.repository.JpaMemberRepository;
+import com.project.myApplication.repository.JpaFileMetadataRepository;
 import com.project.myApplication.repository.JpaProjectRepository;
 import com.project.myApplication.repository.MemberRepository;
 import com.project.myApplication.repository.ProjectRepository;
@@ -42,5 +44,10 @@ public class JpaConfig {
 	@Bean
 	public ProjectRepository projectRepository() {
 		return new JpaProjectRepository(em);
+	}
+	
+	@Bean
+	public FileMetadataRepository fileMetadataRepository() {
+		return new JpaFileMetadataRepository(em);
 	}
 }
