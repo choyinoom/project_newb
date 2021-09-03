@@ -10,7 +10,7 @@
         <div th:unless="${subPath == null}" id="path" class="flex-1 mx-2 align-self-center fs-6">
         <div class="d-none d-sm-block">
             <span class="root path-segment d-inline-block wb-break-all">
-                <a th:href="@{|/users/${owner}/${projectName}|}" th:text=${projectName}></a>
+                <a th:href="@{|/users/${owner}/${project.name}|}" th:text=${project.name}></a>
             </span>
             <span class="separator mx-1">/</span>
         </div>
@@ -29,7 +29,7 @@
     
         <script id="js-repo-breadcrumb" type="text/javascript" th:inline="javascript">
         	let tree_path = document.querySelector("#path");
-       		if (tree_path !== undefined) {
+       		if (tree_path !== null) {
 
             	let tree_path_children = tree_path.children.item(0);
             	let template = tree_path_children.innerHTML.trim();
