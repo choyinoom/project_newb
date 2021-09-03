@@ -15,15 +15,24 @@
     <link rel="stylesheet" href="../../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" href="../../static/css/common.css" th:href="@{/css/common.css}" />
     <style>
-
+        
+        nav {
+            box-shadow: none;
+            font-weight: 600;
+            font-size: 16px;
+            line-height: 24px;
+        }
 
         .dropzone {
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            height: 300px;
+            border-radius: 5px;
+            border: 1px solid #D0D7DE;
         }
 
         .dz-message {
             word-spacing: -1px;
-
+            font-size: large;
         }
 
         /*dropzone 텍스트*/
@@ -51,15 +60,18 @@
             width: 240px;
         }
 
+        #my-previews {
+            margin-bottom: 20px;
+        }
+        
         /* 업로드 된 파일 목록*/
         .dz-processing, .dz-details {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 15px;
-            border: 1px solid gray;
-            border-radius: 2px;
-
+            border: 1px solid #D0D7DE;
+            border-radius: 5px;
         }
 
 
@@ -70,10 +82,10 @@
 
  
         .commit-form {
-            padding: 10px 10px 0px 10px;
+            padding: 20px 15px 20px 15px;
             margin-top: 10px;
             margin-bottom: 10px;
-            border: 1px solid grey;
+            border: 1px solid #D0D7DE;
             border-radius: 5px;
         }
 
@@ -81,8 +93,16 @@
         textarea {
             width: 100%;
             margin-bottom: 10px;
+            padding: 7px;
+            background-color: #F6F8FA;
+            border: 1px solid #D0D7DE;
+            border-radius: 7px;
         }
-
+        
+        .commit-form textarea {
+            height: 100px;
+        }
+        
         #submit-all {
             color: #fff;
             background-color: #198754;
@@ -94,12 +114,19 @@
 <body>
     <div th:replace="fragments/header :: header"></div>
     <div class="container">
-        <form id="my-dropzone" class="dropzone" th:action="@{|/users/${owner}/${projectName}/upload|}" method="post">
+        <nav class="mb-3">
+            <span class="root path-segment d-inline-block wb-break-all">
+                <a th:href="@{|/users/${owner}/${project.name}|}" th:text=${projectName}></a>
+            </span>
+            <span class="separator mx-1">/</span>
+        </nav>
+        <form id="my-dropzone" class="dropzone d-flex align-items-center justify-content-center" th:action="@{/upload-files}" method="post">
+            <input type="hidden" name="repositoryId" th:value="${project.id}">
             <div class="dz-message">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark" viewBox="0 0 16 16">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-file-earmark mb-2" viewBox="0 0 16 16">
                     <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
                 </svg>
-                <h2>Drag additional files to add them to your repository</h2>
+                <h2 class="fs-3">Drag additional files to add them to your repository</h2>
                 <p>
                     Or
                     <input id="upload-manifest-files-input" type="file" multiple class="manual-file-chooser" >
@@ -110,7 +137,7 @@
         <div id="my-previews" class="dropzone-previews">
             <div id="template" class="file-row">
                 <div class="dz-details">
-                    <div class="dz-filename d-flex align-items-center">
+                    <div class="dz-filename d-flex align-items-center justify-content-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark" viewBox="0 0 16 16">
                           <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
                         </svg>
@@ -120,30 +147,32 @@
                         <span class="dz-upload" data-dz-uploadprogress></span>
                     </div>
                     <div class="dz-remove">
-                        <form class="remove-manifest-file" th:action="@{|/users/${owner}/${projectName}/upload|}" th:method="delete">
-                            <input type="hidden" name="file_id">
-                            <button type="submit" class="btn btn-link">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-                                </svg>
-                            </button>
-                        </form>
+                        <button type="button" class="btn btn-link" data-dz-remove>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                              <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-        <form id="file-commit-form">
+        <form id="file-commit-form" th:action="@{|/users/${owner}/${project.name}/upload|}" method="post">
             <div class="commit-form">
-                <h3>Commit changes</h3>
-                <input class="d-block" type="text" placeholder="Add files via upload">
-                <textarea class="d-block" placeholder="Add an optional extended description"></textarea>
+                <h4 class="mb-3">Commit changes</h4>
+                <input class="d-block" name="message" type="text" placeholder="Add files via upload">
+                <textarea class="d-block" name="description" placeholder="Add an optional extended description"></textarea>
             </div>
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-        </form>
         <button id="submit-all" class="btn btn-primary" type="submit">Commit Changes</button>
+        </form>
     </div>
-    <script type="text/javascript">
-        const previewNode = document.querySelector("#template");
+    <script type="text/javascript" th:inline="javascript">
+/*<![CDATA=[*/
+		const uploadId = /*[[${uploadId}]]*/null;
+/*]]>*/
+    	const repositoryId = document.querySelector("input[name='repositoryId']").value;
+    	const csrf = document.querySelector("input[name='_csrf']").value;
+    	
+    	const previewNode = document.querySelector("#template");
         const previewTemplate = document.querySelector("#template").innerHTML;
         Dropzone.options.myDropzone = {
             clickable: false,
@@ -155,65 +184,125 @@
                 this.on("addedfile", function(file) {
                     // change fileName to filePath
                     file.previewElement.firstElementChild.lastElementChild.innerText = file.fullPath || file.name; 
-                    file.previewElement.lastElementChild.querySelector("input[name='file_id']").value = file.upload.uuid;
                 });
                 
                 this.on("sending", function(file, xhr, formData) {
-                	   formData.append("full_path", file.fullPath || file.name);
+                	formData.append("name", file.name);
+                	formData.append("size", file.size);
+                	formData.append("contentType", file.type);
+                	if(file.fullPath) {
+                		const lastIndex = file.fullPath.lastIndexOf("/");
+                		const directory = file.fullPath.substring(0,lastIndex);
+                		formData.append("directory", directory);	
+                	}
+                	formData.append("uploadId", uploadId);
+                	   
                 });
+                
+                this.on("success", function (file, response) {
+                		file.previewElement.querySelector("button[data-dz-remove]").setAttribute('fileId', response['id']);
+                });
+            },
+            removedfile: function(file) {
+            	const form = new FormData();
+        		form.append('_csrf',csrf);
+        		form.append('fileId', file.previewElement.querySelector("button[data-dz-remove]").getAttribute('fileId'));
+
+        		$.ajax({
+        			type: 'DELETE',
+        			url: window.location.href,
+        			data: form,
+    				processData: false,
+    			    contentType: false
+        		}).done(function(data) {
+        			file.previewElement.remove();
+        		}).fail(function(data) {
+        			console.log(data);
+        		});
             }
            
         };
-        previewNode.parentNode.removeChild(previewNode);
+        previewNode.parentNode.removeChild(previewNode); // hide previewTemplate
     
         // handle manually added files
-        var myPreview = document.querySelector("#my-previews");
+        let myPreview = document.querySelector("#my-previews");
         const fileInput = document.getElementById("upload-manifest-files-input");
         fileInput.addEventListener("change", e => {
         	var files = fileInput.files;
-        	var file;
-        	
+
         	for (var i = 0; i < files.length; i++) {
-        		file = files[i];
-        		// create previewNode
-        		var preview = document.createElement("div");
-        		preview.innerHTML = previewTemplate.trim();
-        		preview.querySelector("p[data-dz-name]").innerText = file.name;
-        		preview.querySelector("input[name='file_id']").value = uuid();
-        		myPreview.appendChild(preview);
-        		// send file
-        		//var dropzone = document.querySelector("#my-dropzone").submit();
+        		
+        		(function (i) {
+        			const file = files[i];
+            		const formData = makePostForm(file);
+            		// create previewNode
+            		var preview = document.createElement("div");
+            		preview.innerHTML = previewTemplate.trim();
+            		preview.querySelector("p[data-dz-name]").innerText = file.name;
+            		myPreview.appendChild(preview);
+        			// send file
+    				$.ajax({
+    					type: "POST",
+    					url: document.querySelector("#my-dropzone").action,
+    					enctype: 'multipart/form-data',
+    					data: formData,
+    					processData: false,
+    				    contentType: false
+    				}).done(function(response) {
+    					// add EventListener to removeBtn
+    					let removeBtn = preview.querySelector("button[data-dz-remove]");
+    					removeBtn.setAttribute('fileId', response['id']);
+    					removeBtn.addEventListener("click", e => {
+    						const form = new FormData();
+                    		form.append('_csrf',csrf);
+                    		form.append('fileId', response['id']);
+                    		$.ajax({
+                    			type: 'DELETE',
+                    			url: window.location.href,
+                    			data: form,
+                				processData: false,
+                			    contentType: false
+                    		}).done(function(data) {
+                    			preview.remove();
+                    		}).fail(function(data) {
+                    			console.log(data);
+                    		});
+    					})
+    				});
+        		})(i);
+        		
+
+        		
         	}
         })
         
         
-        // handle remove Button
-      	var buttons = document.getElementsByClassName("remove-manifest-file");
+    	
+    	// 
+       function makePostForm(file) {
+    		const form = new FormData();
+    		form.append('name', file.name);
+    		form.append('size', file.size);
+    		form.append("contentType", file.type);
+    		form.append('_csrf', csrf);
+    		form.append('repositoryId', repositoryId);
+    		form.append('uploadId', uploadId);
+    		form.append('file', file);
+    		return form;
+    	}
+    	
         
-        
-        function uuid() {
-        	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        	    var r = Math.random() * 16 | 0,
-                	v = c === 'x' ? r : r & 0x3 | 0x8;
-               	return v.toString(16);
-        	});
-        }
-        
-        
-    	$('.remove-manifest-file').submit(function(e) {
-    		e.preventDefault();
-    		console.log("I am here!!!")
-    		$.ajax({
-    			type: this.attr('method'),
-    			url: this.attr('action')
-    		}).success(function(data) {
-    			console.log(data);
-    		}).fail(function(data) {
-    			console.log(data);
-    		});
-    	})
- 
-       
+        const commitForm = document.getElementById("file-commit-form");
+        commitForm.addEventListener("submit", function(e) {
+        	e.preventDefault();
+        	let formData = new FormData(commitForm);
+        	formData.append("repositoryId", repositoryId);
+        	formData.append("uploadId", uploadId);
+        	// submit the data via XHR
+        	let request = new XMLHttpRequest();
+        	request.open("POST", e.target.baseURI);
+        	request.send(formData);
+        });
     </script>
 
 </body>
