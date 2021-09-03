@@ -32,6 +32,9 @@
                     <hr>
                 </div>
                 <div class="owner-reponame clearfix">
+                    <div th:if="!${status}" class="alert alert-warning" role="alert">
+                      레파지토리 이름이 유효하지 않습니다.
+                    </div>
                     <dl class="form-group float-start mt-1 mb-0">
                         <dt class="form-group-header">
                             <label id="repository-owner-label" for="repository-owner">
