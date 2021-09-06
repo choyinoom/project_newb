@@ -72,6 +72,10 @@
             min-height: 1.1875rem;
         }
         
+        .root {
+            font-weight: 600!important;
+        }
+        
         .memo {
             position: absolute;
             display:none;
@@ -136,10 +140,22 @@
 			html: true,
 			content: div
 	   });
+	   
+	   
 	   popoverEl.addEventListener('shown.bs.popover', function() {
+		   
 		   let cancleBtn = document.querySelector('input[name="cancle"]');
 		   cancleBtn.addEventListener('click', e => {
 			   popover.hide();
+		   });
+	   });
+	   
+	   popoverEl.addEventListener('click', function() {
+		   let range = window.getSelection().getRangeAt(0);
+		   let textarea = document.querySelector("#story");
+		   textarea.addEventListener('click', function() {
+			   window.getSelection().removeAllRanges();
+			   window.getSelection().addRange(range);
 		   });
 	   });
    			
@@ -171,10 +187,11 @@
         let popover = bootstrap.Popover.getInstance(document.querySelector(".popover")).hide();
     }
     
+    let codeArea = document.querySelector("pre");
     let drag = false;
-    document.addEventListener('mousedown', () => drag = false);
-    document.addEventListener('mousemove', () => drag = true);
-    document.addEventListener('mouseup', (e) => drag? gText(e) : hideBtn(e));
+    codeArea.addEventListener('mousedown', () => drag = false);
+    codeArea.addEventListener('mousemove', () => drag = true);
+    codeArea.addEventListener('mouseup', (e) => drag? gText(e) : hideBtn(e));
     
     function draw(left, top) {
     	var memoBtn = document.querySelector(".memo");

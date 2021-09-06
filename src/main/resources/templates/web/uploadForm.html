@@ -116,7 +116,7 @@
     <div class="container">
         <nav class="mb-3">
             <span class="root path-segment d-inline-block wb-break-all">
-                <a th:href="@{|/users/${owner}/${project.name}|}" th:text=${projectName}></a>
+                <a th:href="@{|/users/${project.owner}/${project.name}|}" th:text=${projectName}></a>
             </span>
             <span class="separator mx-1">/</span>
         </nav>
@@ -277,8 +277,6 @@
         })
         
         
-    	
-    	// 
        function makePostForm(file) {
     		const form = new FormData();
     		form.append('name', file.name);
@@ -298,10 +296,22 @@
         	let formData = new FormData(commitForm);
         	formData.append("repositoryId", repositoryId);
         	formData.append("uploadId", uploadId);
-        	// submit the data via XHR
-        	let request = new XMLHttpRequest();
-        	request.open("POST", e.target.baseURI);
-        	request.send(formData);
+        	
+        	$.ajax({
+    			type: 'POST',
+    			url: e.target.baseURI,
+    			data: formData,
+				processData: false,
+			    contentType: false,
+			    statusCode: {
+			    	201: function() {
+			    		window.location.replace(document.querySelector(".root").children[0].href);
+			    	},
+			    	404: function() {
+			    		alert('커밋 중 오류가 발생하였습니다. 불편을 드려 죄송합니다.');
+			    	}
+			    }
+    		});
         });
     </script>
 
