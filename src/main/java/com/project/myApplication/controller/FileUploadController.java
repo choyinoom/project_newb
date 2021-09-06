@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.project.myApplication.domain.FileMetadata;
 import com.project.myApplication.domain.Project;
-import com.project.myApplication.service.FileSystemStorageService;
+import com.project.myApplication.repository.MemberRepository;
+import com.project.myApplication.service.FileMetadataService;
 import com.project.myApplication.service.ObjectStorageService;
 import com.project.myApplication.service.ProjectService;
 
@@ -30,13 +30,16 @@ import lombok.extern.slf4j.Slf4j;
 public class FileUploadController {
 
 	private final ProjectService projectService;
-	private final FileSystemStorageService fileStorageService;
+	private final FileMetadataService fileMetadataService;
 	private final ObjectStorageService objectStorageService;
 	
 	@Autowired
-	public FileUploadController(ProjectService projectService, FileSystemStorageService fileStorageService, ObjectStorageService objectStorageService) {
+	private MemberRepository memberRepository;
+	
+	@Autowired
+	public FileUploadController(ProjectService projectService, FileMetadataService fileMetadataService, ObjectStorageService objectStorageService) {
 		this.projectService = projectService;
-		this.fileStorageService = fileStorageService;
+		this.fileMetadataService = fileMetadataService;
 		this.objectStorageService = objectStorageService;
 	}
 	
@@ -77,7 +80,7 @@ public class FileUploadController {
     public ResponseEntity<FileMetadata> uploadFiles(@RequestParam MultipartFile file, FileMetadata formData) {
 
     	try {
-    		FileMetadata data = fileStorageService.store(file, formData);
+    		FileMetadata data = fileMetadataService.store(file, formData);
     		return new ResponseEntity<>(data, HttpStatus.CREATED);
 		} catch (Exception e) {
 			if(e.getMessage().equals("EmtpyFileException")) {
@@ -98,7 +101,7 @@ public class FileUploadController {
     	
     	try {
     		Long id = Long.valueOf(fileId);
-        	fileStorageService.deleteById(id);
+        	fileMetadataService.deleteById(id);
         	return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     	} catch (Exception e) {
     		
@@ -109,17 +112,33 @@ public class FileUploadController {
     /**
      * 커밋 내용에 대한 POST 요청 처리
      */
-    @PostMapping("/users/{owner}/{projetName}/upload")
-    @ResponseBody
-    public String commit(@RequestParam Map<String, String> paramMap) {
+    @PostMapping("/users/{owner}/{projectName}/upload")
+    public ResponseEntity<Object> commit(@PathVariable String owner, 
+    		@PathVariable String projectName,
+    		@RequestParam Map<String, String> paramMap) {
+    	
+    	String email = memberRepository
+    			.findByUsername(owner)
+    			.get()
+    			.getEmail();
+    	paramMap.put("email", email);
+
     	Long repositoryId = Long.valueOf(paramMap.get("repositoryId"));
     	Long uploadId = Long.valueOf(paramMap.get("uploadId"));
-    	List<FileMetadata> list = fileStorageService.findByRespositoryIdAndUploadId(repositoryId, uploadId);
-    	objectStorageService.store(list);
-    	log.debug("repositoryId: {}", paramMap.get("repositoryId"));
-    	log.debug("uploadiD: {}", paramMap.get("uploadId"));
-    	log.debug("commit msg: {}", paramMap.get("message"));
-    	return "ok";
+    	List<FileMetadata> list = fileMetadataService.findByRespositoryIdAndUploadId(repositoryId, uploadId);
+    	
+    	ResponseEntity<Object> response = null;
+    	try {
+    		objectStorageService.store(list, paramMap);
+    		response = new ResponseEntity<Object>(null, HttpStatus.CREATED);
+    		
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		response = new ResponseEntity<Object>(null,HttpStatus.BAD_REQUEST);
+    	}
+    	
+    	return response;
+    	
     }
     
     

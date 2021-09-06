@@ -7,9 +7,6 @@ import javax.persistence.EntityManager;
 
 import com.project.myApplication.domain.Project;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class JpaProjectRepository implements ProjectRepository{
 
 	private final EntityManager em;

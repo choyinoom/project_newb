@@ -1,5 +1,6 @@
 package com.project.myApplication.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -17,12 +18,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.project.myApplication.PropertiesConfig;
 import com.project.myApplication.domain.Project;
 import com.project.myApplication.service.ObjectStorageService;
 import com.project.myApplication.service.ProjectService;
 import com.project.myApplication.util.FileMap;
-import com.project.myApplication.util.FileUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,13 +32,11 @@ public class ProjectController {
 
 	private final ProjectService projectService;
 	private final ObjectStorageService objectStorageService;
-	private final PropertiesConfig propertiesConfig;
 	
 	@Autowired
-	public ProjectController(ProjectService projectService, ObjectStorageService objectStorageService, PropertiesConfig propertiesConfig) {
+	public ProjectController(ProjectService projectService, ObjectStorageService objectStorageService) {
 		this.projectService = projectService;
 		this.objectStorageService = objectStorageService;
-		this.propertiesConfig = propertiesConfig;
 	}
 	
     
@@ -58,9 +55,9 @@ public class ProjectController {
     		Project project = projectService.findByOwnerAndName(owner, projectName);
     		log.debug("this is fetch result from repository= {}", project);
     		model.addAttribute(project);
-    		String path = getProjectRootURL(owner, projectName);
-        	List<FileMap> entry = FileUtil.getInstance().listDirectory(path);	
-        	model.addAttribute("entry", entry);
+        	
+    		List<FileMap> entry = objectStorageService.getEntry(project.getId(), null);
+    		model.addAttribute("entry", entry);
         	
         	viewName = viewName + "web/project";
     	} catch (NoSuchElementException e) {
@@ -90,9 +87,8 @@ public class ProjectController {
     	Project project = projectService.findByOwnerAndName(owner, projectName);
     	model.addAttribute(project);
 
-    	String root = getProjectRootURL(owner, projectName);
     	String subPath = getObjectURL(request);
-    	List<FileMap> entry = FileUtil.getInstance().listDirectory(root + "/" + subPath);
+    	List<FileMap> entry = objectStorageService.getEntry(project.getId(), subPath);
     	
     	model.addAttribute("entry", entry);
     	model.addAttribute("subPath", subPath);
@@ -107,10 +103,12 @@ public class ProjectController {
     @GetMapping("/users/{owner}/{projectName}/blob/**")
     public String blob(@PathVariable String owner, @PathVariable String projectName, HttpServletRequest request, Model model) {
     	
-    	String root = getProjectRootURL(owner, projectName);
+    	Project project = projectService.findByOwnerAndName(owner, projectName);
+    	model.addAttribute(project);
+
     	String subPath = getObjectURL(request);
 
-    	List<String> content = FileUtil.getInstance().readFile(root + "/" + subPath);
+    	List<String> content = objectStorageService.getBlob(project.getId(), subPath);
     	
     	model.addAttribute("project", new Project(owner, projectName));
     	model.addAttribute("content", content);
@@ -130,6 +128,7 @@ public class ProjectController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         mv.addObject("username", username);
+        mv.addObject("status", "ready");
         return mv;
     } 
 
@@ -145,6 +144,7 @@ public class ProjectController {
         
     	try {
     		Long id = projectService.add(project);
+    		objectStorageService.init(id);
             redirectAttributes.addAttribute("projectName", project.getName());
             redirectAttributes.addAttribute("owner",project.getOwner());
             redirectAttributes.addAttribute("status", true);
@@ -155,17 +155,25 @@ public class ProjectController {
     	}
     }
     
-    
-    private String getProjectRootURL(String owner, String projectName) {
-    	final String prefix = propertiesConfig.getStorageRoot();
-    	return String.format(prefix+"%s/%s/", owner, projectName);
+    @GetMapping("/users/{owner}/{projectName}/find")
+    public String findFiles(@PathVariable String owner, @PathVariable String projectName, Model model) {
+    	
+    	Project project = projectService.findByOwnerAndName(owner, projectName);
+    	Long repositoryId = project.getId();
+    	List<String> fileList = new ArrayList<>();
+    	fileList = objectStorageService.findFiles(repositoryId);
+    	log.debug("this is file list {}", fileList);
+    	model.addAttribute("fileList", fileList);
+    	model.addAttribute(project);
+    	return "web/finder";
     }
+  
     
     private String getObjectURL(HttpServletRequest request) {
     	String 	orgRequest = request.getRequestURI();
     	log.debug("this is requestURI = {}", orgRequest);
     	int fifthSlash = StringUtils.ordinalIndexOf(orgRequest, "/", 5);
-    	String processed = orgRequest.substring(fifthSlash+1);
+    	String processed = orgRequest.substring(fifthSlash);
     	return processed;
     }
     

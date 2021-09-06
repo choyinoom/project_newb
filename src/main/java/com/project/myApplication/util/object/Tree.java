@@ -3,6 +3,8 @@ package com.project.myApplication.util.object;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -18,18 +20,21 @@ public class Tree implements GitObject{
 
 	private static final long serialVersionUID = 6414044871241752223L;
 	private String hash;
-	private int size = 0;
-	private transient byte[] content;
+	private int size;
+	private String mtime;
 	private Map<String, GitObject> tree = new TreeMap<>();
+	private transient byte[] content;
+	
+	public Tree(String mtime) {
+		this.size = 0;
+		this.mtime = mtime;
+	}
+	
 	
 	public Tree() {
-			
 	}
-	
-	public Tree(String hash) {
-		this.hash = hash;
-	}
-	
+
+
 	public void makeTreeHash(HashGenerator hashGenerator) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		tree.forEach((k, v) -> {
@@ -86,7 +91,23 @@ public class Tree implements GitObject{
 		return store;
 	}
 
-	
+	public List<String> print(String parent, List<String> fileList) {
+		tree.forEach((k,v) -> {
+			if(v instanceof Blob) {
+				fileList.add(parent + k); 
+			} else {
+				Tree tree = (Tree) v;
+				if (parent.equals("")) {
+					tree.print(k+"/", fileList);
+				} else {
+					tree.print(parent+k+"/", fileList);
+				}
+			}
+		});
+		
+		return fileList;
+		
+	}
 	@Override
 	public int getSize() {
 		return size;
@@ -97,5 +118,14 @@ public class Tree implements GitObject{
 	public String getHash() {
 		return hash;
 	}
-
+	
+	@Override
+	public String getType() {
+		return "tree";
+	}
+	
+	@Override
+	public String getMtime() {
+		return mtime;
+	}
 }

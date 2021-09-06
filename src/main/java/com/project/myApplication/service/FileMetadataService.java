@@ -23,13 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @Transactional
-public class FileSystemStorageService {
+public class FileMetadataService {
 
 	private final String tmpLocation;
 	private final FileMetadataRepository fileRepository;
 	
 	@Autowired
-	public FileSystemStorageService(PropertiesConfig config, FileMetadataRepository fileRepository) {
+	public FileMetadataService(PropertiesConfig config, FileMetadataRepository fileRepository) {
 		this.tmpLocation = config.getStorageTmp();
 		this.fileRepository = fileRepository;
 	}
