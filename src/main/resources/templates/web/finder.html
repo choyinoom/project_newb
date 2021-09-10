@@ -2,15 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>File Finder</title>
-    
     <!-- jquery -->
     <script src="../../static/js/jquery-3.6.0.min.js" th:src="@{/js/jquery-3.6.0.min.js}"></script>
-
     <!-- bootstrap -->
     <link rel="stylesheet" href="../../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}">
     <link rel="stylesheet" href="../../static/css/common.css" th:href="@{/css/common.css}" />
-    
+    <link rel="icon" th:href="@{/image/Mooncake-MP.png}" type="image/x-icon" />
+    <title>File Finder</title>
     <style>
         a svg {
             color: #24292E;
@@ -53,6 +51,9 @@
                 <a th:href="@{|/users/${project.owner}/${project.name}|}" th:text=${projectName}></a>
             </span>
             <span class="separator mx-1">/</span>
+            <div class="tree-finder">
+                <input type="text" name="query" autocomplete="off" spellcheck="false" autofocus id="tree-finder-field" aria-label="The name of the file to navigate to." class="">
+            </div>
          </nav>
          <div class="alert alert-info alert-dismissible fade show" role="alert">
             You've activated the <i>file finder</i>. Start typing to filter the file list.
@@ -61,7 +62,7 @@
          <main>
             <ul id="tree-browser" class="border-top border-start border-end m-0 p-0">
                 <li th:each="file : ${fileList}" >
-                    <a th:href="@{|/users/${project.owner}/${project.name}/blob/${file}|}" 
+                    <a th:href="@{|/users/${project.owner}/${project.name}/blob/${branch}/${file}|}" 
                         class="d-block p-1 py-2 border-bottom">
                         <svg height="16" viewBox="0 0 16 16" version="1.1" width="16" fill="currentColor" class="octicon octicon-chevron-right ms-2 me-2">
                             <path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 010-1.06z"></path>

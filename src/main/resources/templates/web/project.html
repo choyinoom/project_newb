@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
     <link rel="stylesheet" href="../../static/css/common.css" th:href="@{/css/common.css}" />
+    <link rel="icon" th:href="@{/image/Mooncake-MP.png}" type="image/x-icon" />
     <title th:text="@{|${owner}/${projectName}|}"></title>
     
     <!-- jquery -->
@@ -31,37 +32,12 @@
             border-radius: 5px;
         }
 
-        table {
-            font-size: 14px;
-            text-align: left;
-            border: 1px solid lightgray;
-        }
-        
-        table thead {
-            background-color: #f0f0f0;
-        }
-        
-        table tr {
-            border-bottom: 1px solid lightgray;
-        }
-        
-        table th, td {
-            padding: 10px 16px;
-            padding-top: 8px !important;
-            padding-bottom: 8px !important;
-        }
-        
-        table a {
-            padding-left: 10px;
-        }
-        
-        tr[class^='template'] {
-            display: none;
-        }
         
         .root {
             font-weight: 600!important;
         }
+        
+        
     </style>
 </head>
 
@@ -76,7 +52,12 @@
                     <div class="flex-shrink-0 col-12 col-md-9 mb-4">
                         <div th:replace="fragments/repo-breadcrumb :: repo-breadcrumb"></div>
                         <!-- 프로젝트 파일 리스트-->
-                        <div id="box" th:replace="fragments/table :: table"></div>
+                        <div th:if="${#lists.size(entry) > 0}">
+                            <div id="box" th:replace="fragments/table :: table"></div>
+                        </div>
+                        <div th:if="${#lists.size(entry) == 0}" class="alert alert-info" role="alert">
+                            No files yet!
+                        </div>
                     </div>
                     <!--오른쪽 파트-->
                     <div class="flex-shrink-0 col-12 col-md-3">

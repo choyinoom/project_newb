@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
     <link rel="stylesheet" href="../../static/css/common.css" th:href="@{/css/common.css}" />
+    <link rel="icon" th:href="@{/image/Mooncake-MP.png}" type="image/x-icon" />
     <title th:text="@{|${owner}/${projectName}|}"></title>
    
     <style>
@@ -37,32 +38,8 @@
             border-radius: 5px;
         }
 
-        table {
-            font-size: 14px;
-            text-align: left;
-            border: 1px solid lightgray;
-        }
-        
-        table thead {
-            background-color: #f0f0f0;
-        }
-        
-        table tr {
-            border-bottom: 1px solid lightgray;
-        }
-        
-        table th, td {
-            padding: 10px 16px;
-            padding-top: 8px !important;
-            padding-bottom: 8px !important;
-        }
-        
-        table a {
-            padding-left: 10px;
-        }
-        
-        tr[class^='template'] {
-            display: none;
+        table th:nth-child(2) {
+            width: 54% !important;
         }
         
         .root {

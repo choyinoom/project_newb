@@ -7,8 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
     <link rel="stylesheet" href="../../static/css/common.css" th:href="@{/css/common.css}" />
-    <script type="text/javascript" th:src="@{/js/jquery-3.6.0.min.js}"></script>
+    <link rel="icon" th:href="@{/image/Mooncake-MP.png}" type="image/x-icon" />
     <title th:text="@{|${projectName}|}"></title>
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.0.min.js}"></script>
     
     <style>
     
@@ -81,7 +82,16 @@
             display:none;
         }
         
-             
+        button[data-bs-toggle] {
+            position: absolute;
+            top: 20px;
+            right: 660px;
+        }
+        
+        #story {
+            width:370px;
+            min-height: 800px;
+        }     
          
     </style>
 </head>
@@ -111,96 +121,28 @@
                 </div>
             </div>
         </div>
-        <a tabindex=0 class="btn btn-sm btn-warning memo" role="button" title="awesome">
+        <button class="btn btn-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">🧐</button>
+        <div class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasScrollingLabel">메모장</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <form method="post" th:action="@{|/users/${project.owner}/${project.name}/memo|}"> 
+                    <textarea id="story" name="story" class="mb-2" placeholder="메모를 작성하세요"></textarea>
+                    <div>
+                        <input class="btn btn-primary" name="submit" type="submit" value="저장">
+                        <input class="btn btn-primary" name="cancle" type="button" value="취소">
+                    </div>
+                </form>
+            </div>
+        </div>
+       <!--  <a tabindex=0 class="btn btn-sm btn-warning memo" role="button" title="awesome">
         👀
-        </a>
+        </a> -->
     </main>
 
 </body>
 <script type="text/javascript" th:src="@{/js/bootstrap.bundle.min.js}"></script>
-<script type="text/javascript">
-   $(function() {
-      
-	   let div = document.createElement('div');
-	   const innerHTML =
-	   		`<form method="post"> 
-				<textarea id="story" name="story" row="5" cols="33" placeholder="Write your opinion"> 
-				</textarea>
-				<input name="submit" type="submit" value="저장">
-				<input name="cancle" type="button" value="취소">
-			</form>`;	
-	   	
-	   div.innerHTML = innerHTML.trim();
-	   
-	 
-	  
-	   let popoverEl = document.querySelector('.memo');
-	   let popover = new bootstrap.Popover(popoverEl, {
-		   placement : 'bottom',
-			html: true,
-			content: div
-	   });
-	   
-	   
-	   popoverEl.addEventListener('shown.bs.popover', function() {
-		   
-		   let cancleBtn = document.querySelector('input[name="cancle"]');
-		   cancleBtn.addEventListener('click', e => {
-			   popover.hide();
-		   });
-	   });
-	   
-	   popoverEl.addEventListener('click', function() {
-		   let range = window.getSelection().getRangeAt(0);
-		   let textarea = document.querySelector("#story");
-		   textarea.addEventListener('click', function() {
-			   window.getSelection().removeAllRanges();
-			   window.getSelection().addRange(range);
-		   });
-	   });
-   			
-		
-		
-	});  
-		
-		
-   
-   	
-   	
-	
-	
-	
-    function gText(e) {
-    	var cur_t = (document.all) ? document.selection.createRange().text : document.getSelection();
-        var rect = e.target.getBoundingClientRect();
-        //console.log(rect.left, window.scrollX, e.screenX, e.clientX);
-        draw(e.clientX, rect.top + window.scrollY);
-        
-    }
-    
-    function hideBtn(e) {
-    	if(e.target.classList.contains("memo") // 버튼 자체를 누르거나
-    			|| e.target.parentNode.tagName === "FORM") // popover일 경우,
-    		return;
-    	let memoBtn = document.querySelector(".memo");
-        memoBtn.style.display = "none";
-        let popover = bootstrap.Popover.getInstance(document.querySelector(".popover")).hide();
-    }
-    
-    let codeArea = document.querySelector("pre");
-    let drag = false;
-    codeArea.addEventListener('mousedown', () => drag = false);
-    codeArea.addEventListener('mousemove', () => drag = true);
-    codeArea.addEventListener('mouseup', (e) => drag? gText(e) : hideBtn(e));
-    
-    function draw(left, top) {
-    	var memoBtn = document.querySelector(".memo");
-        memoBtn.style.display = "inline-block"
-        memoBtn.style.left = `${left}px`;
-    	memoBtn.style.top = `${top}px`;
-    	memoBtn.style.margin = '10px';
-    }
-    
-    
-</script>
+
 </html>
