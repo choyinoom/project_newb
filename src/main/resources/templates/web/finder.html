@@ -15,7 +15,9 @@
         }
         
         nav {
+            display: table;
             box-shadow: none;
+            font-size: 16px;
         }
         
         
@@ -40,20 +42,33 @@
             font-size: medium;
         }
         
+        .breadcrumb-prefix {
+            display: table-cell;
+            width: 1%;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
         
+        .tree-finder-input {
+            font-size: inherit;
+            box-shadow: none;
+            appearance: none;
+            min-height: 32px;
+        }
     </style>
 </head>
 <body>
      <div th:replace="fragments/header :: header"></div>
      <div class="container">
         <nav class="mb-3">
-            <span class="root path-segment d-inline-block wb-break-all">
-                <a th:href="@{|/users/${project.owner}/${project.name}|}" th:text=${projectName}></a>
-            </span>
-            <span class="separator mx-1">/</span>
-            <div class="tree-finder">
-                <input type="text" name="query" autocomplete="off" spellcheck="false" autofocus id="tree-finder-field" aria-label="The name of the file to navigate to." class="">
+            <div class="breadcrumb-prefix">
+                <span class="root path-segment d-inline-block wb-break-all">
+                    <a th:href="@{|/users/${project.owner}/${project.name}|}" th:text=${projectName}></a>
+                </span>
+                <span class="separator mx-1">/</span>
             </div>
+            <input type="text" name="query" autocomplete="off" spellcheck="false" autofocus id="tree-finder-field" aria-label="The name of the file to navigate to." 
+            class="form-control tree-finder-input p-0 ms-1 border-0">
          </nav>
          <div class="alert alert-info alert-dismissible fade show" role="alert">
             You've activated the <i>file finder</i>. Start typing to filter the file list.
@@ -76,6 +91,25 @@
             </ul>
          </main>
      </div>
-     <script src="../../static/js/bootstrap.bundle.min.js" th:src="@{/js/bootstrap.bundle.min.js}"></script>   
+     <script src="../../static/js/bootstrap.bundle.min.js" th:src="@{/js/bootstrap.bundle.min.js}"></script>
+     <script type="text/javascript">
+     	let treeFinderInput = document.querySelector(".tree-finder-input");
+     	treeFinderInput.addEventListener("click", function() {
+     		treeFinderInput.addEventListener("keyup", (e) => {
+     			let searchData = e.target.value.toLowerCase();
+     			console.log(searchData);
+     			let treeItems = document.querySelectorAll("main li");
+     			treeItems.forEach(item => {
+     				if (item.querySelector("span").innerText.toLowerCase().includes(searchData)) {
+     					item.classList.remove("d-none");
+     					item.classList.add("d-block");
+     				} else {
+     					item.classList.remove("d-block");
+     					item.classList.add("d-none");
+     				}
+     			})
+     		})
+     	})
+     </script>   
 </body>
 </html>
