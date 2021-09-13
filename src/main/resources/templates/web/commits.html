@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="../../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
+        <link rel="stylesheet" href="../../static/css/common.css" th:href="@{/css/common.css}" />
+        <link rel="icon" th:href="@{/image/Mooncake-MP.png}" type="image/x-icon" />
+        <title th:text="|Commits · ${project.owner}/${project.name}|"></title>
+        <style>
+            .box-row {
+                padding: 16px;
+                border-top-color: var(--color-border-secondary);
+                border-radius: 6px;
+                border: solid 1px #D0D7DE;
+                margin-top: 10px;
+            }
+            
+            .box-row:hover {
+                background-color: #F6F8FA;
+            }
+            
+            .committer, .commit-date {
+                font-size: 12px;
+                
+            }
+            
+            .committer {
+                font-weight: 600;
+            }
+            
+            .commit-date {
+                color: #57606A;
+            }
+            
+            .btn-group button:nth-child(2){
+                width: 80.1875px;
+                font-family: consolas;
+                font-size: 12px;
+                font-weight: 500;
+            }
+            
+            .browse {
+                width: 50px;
+            }
+            
+            .btn span {
+                color: #0969DA;
+            }
+            
+            .btn:hover span {
+                color: #FFFFFF;
+            }
+            
+            .btn:hover{
+                background-color: #0969DA;
+                color: #FFFFFF;
+            }
+            
+            .btn-sm {
+                display: inline-flex;
+                background-color: #F3F4F6;
+                padding: 0 2px 0 2px;
+                height: 15px;
+                justify-content: center;
+            }
+            
+            .btn-sm:hover {
+                background-color: skyblue;
+            }
+        </style>
+    </head>
+    <body>
+        <main>
+            <div th:replace="fragments/header :: header"></div>
+            <div class="clearfix container-xl px-3 px-md-4 px-lg-5 timeline">
+                <section id="repository-content">
+                    <ul>
+                        <li th:each ="c : ${commitHistory}"  class="d-flex commits-list-item box-row">
+                            <div class="flex-auto min-width-0">
+                                <p class="mb-1">
+                                    <span class="fw-bold" th:text="${c.message}"></span>
+                                    <button class="btn btn-sm ellipsis-expander">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="13" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+                                            <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+                                        </svg>
+                                    </button>
+                                </p>
+                                <div class="my-2 d-none commit-description" th:if="${c.description != 'null'}">
+<pre th:text="${c.description}"></pre>
+                                </div>
+                                <div class="d-flex align-items-center mt-1">
+                                    <span class="committer" th:text="${c.committer}"></span>&nbsp;<span class="commit-date" th:text="|commited on ${c.time}|"></span>
+                                </div>
+                            </div>
+                            <div class="d-none d-md-block flex-shrink-0">
+                                <div class="btn-group btn-group-md" role="group">
+                                    <button type="button" class="btn btn-light d-flex align-items-center clipboard-copy" th:attr="copy-value=${c.hash}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                                            <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+                                            <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="btn btn-light">
+                                        <span th:text="${#strings.substring(c.hash, 0,7)}"></span>
+                                    </button>
+                                </div>
+                                <div class="d-inline">
+                                    <a class="btn btn-md btn-light browse" th:href="@{|/users/${project.owner}/${project.name}/tree/${c.hash}|}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-code" viewBox="0 0 16 16">
+                                            <path d="M5.854 4.854a.5.5 0 1 0-.708-.708l-3.5 3.5a.5.5 0 0 0 0 .708l3.5 3.5a.5.5 0 0 0 .708-.708L2.707 8l3.147-3.146zm4.292 0a.5.5 0 0 1 .708-.708l3.5 3.5a.5.5 0 0 1 0 .708l-3.5 3.5a.5.5 0 0 1-.708-.708L13.293 8l-3.147-3.146z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+            </div>    
+        </main>
+        <script>
+        	let copyButtons = document.querySelectorAll(".clipboard-copy");
+        	copyButtons.forEach(function(button) {
+        		button.addEventListener("click", function() {
+        			const copyValue = button.getAttribute("copy-value");
+        			navigator.clipboard.writeText(copyValue);
+        		});
+        	});
+        	
+        	let showDescriptionButtons = document.querySelectorAll(".ellipsis-expander");
+        	showDescriptionButtons.forEach(function(button) {
+        		button.addEventListener("click", function() {
+        			let div = button.closest("p").nextElementSibling;
+        			div.classList.toggle("d-none");
+        		})
+        	})
+        </script>
+    </body>
+</html>
