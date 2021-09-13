@@ -121,6 +121,7 @@ public class FileUploadController {
     			.findByUsername(owner)
     			.get()
     			.getEmail();
+    	paramMap.put("owner", owner);
     	paramMap.put("email", email);
 
     	Long repositoryId = Long.valueOf(paramMap.get("repositoryId"));
