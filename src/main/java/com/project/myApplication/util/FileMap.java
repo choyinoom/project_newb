@@ -7,6 +7,13 @@ import lombok.Setter;
 public class FileMap {
 
 	String name;
+	String hash;
 	String type;
 	String mtime;
+	
+	@Override
+	public String toString() {
+		return String.format("%s %s %s %s", type, name, hash, mtime);
+		
+	}
 }

@@ -1,8 +1,13 @@
 package com.project.myApplication.controller;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -47,21 +52,30 @@ public class ProjectController {
      * @param model
      * @return
      */
-    @GetMapping("/users/{owner}/{projectName}")
-    public String repository(@PathVariable String owner, @PathVariable String projectName, Model model) {
+    @GetMapping({"/users/{owner}/{projectName}", "/users/{owner}/{projectName}/tree/{entry}"})
+    public String repository(
+    		@PathVariable String owner,
+    		@PathVariable String projectName, 
+    		@PathVariable Optional<String> entry, Model model) {
         
     	String viewName = "";
     	try {
     		Project project = projectService.findByOwnerAndName(owner, projectName);
-    		log.debug("this is fetch result from repository= {}", project);
     		model.addAttribute(project);
         	
-    		List<FileMap> entry = objectStorageService.getEntry(project.getId(), null);
-    		model.addAttribute("entry", entry);
-        	
-        	viewName = viewName + "web/project";
+    		Long repositoryId = project.getId();
+    		String branch = entry.orElse("main");
+    		List<FileMap> list = objectStorageService.getEntry(repositoryId, branch, "/");
+    		if(list.size() > 0) {
+    			model = setTableHeader(repositoryId, branch, model);    	
+    		}
+    		String location = String.format("/users/%s/%s/tree/%s", owner, projectName, branch);
+    		model.addAttribute("branch", branch);
+    		model.addAttribute("location",location);
+    		model.addAttribute("entry", list);
+    		viewName += "web/project";
     	} catch (NoSuchElementException e) {
-    		viewName = viewName + "error/404";
+    		viewName += "error/404";
     	} catch (Exception e) {
     		log.error("unknown error", e);
     	}
@@ -77,21 +91,25 @@ public class ProjectController {
      * @param request 요청이 들어온 URL을 그대로 반환하기 위해 필요
      * @param model
      */
-    @GetMapping("/users/{owner}/{projectName}/tree/**")
+    @GetMapping("/users/{owner}/{projectName}/tree/{branch}/{entry}/**")
     public String tree(
     		@PathVariable String owner, 
     		@PathVariable String projectName,
+    		@PathVariable String branch,
     		HttpServletRequest request,
     		Model model) {
-    	
+    	log.debug("tree에 들어왔다!");
     	Project project = projectService.findByOwnerAndName(owner, projectName);
     	model.addAttribute(project);
 
     	String subPath = getObjectURL(request);
-    	List<FileMap> entry = objectStorageService.getEntry(project.getId(), subPath);
+    	List<FileMap> entry = objectStorageService.getEntry(project.getId(), branch, subPath);
     	
+    	model.addAttribute("branch", branch);
     	model.addAttribute("entry", entry);
-    	model.addAttribute("subPath", subPath);
+    	model.addAttribute("location", decode(request.getRequestURI()));
+    	model.addAttribute("detail", true);
+    	model = setTableHeader(project.getId(), branch, model);
     	
     	return "web/tree";
     }
@@ -100,19 +118,24 @@ public class ProjectController {
     /**
      * 파일을 한 줄씩 읽어서 blob view 반환
      */
-    @GetMapping("/users/{owner}/{projectName}/blob/**")
-    public String blob(@PathVariable String owner, @PathVariable String projectName, HttpServletRequest request, Model model) {
+    @GetMapping("/users/{owner}/{projectName}/blob/{branch}/**")
+    public String blob(
+    		@PathVariable String owner, 
+    		@PathVariable String projectName, 
+    		@PathVariable String branch,
+    		HttpServletRequest request, Model model) {
     	
     	Project project = projectService.findByOwnerAndName(owner, projectName);
     	model.addAttribute(project);
 
     	String subPath = getObjectURL(request);
 
-    	List<String> content = objectStorageService.getBlob(project.getId(), subPath);
+    	List<String> content = objectStorageService.getBlob(project.getId(), branch, subPath);
     	
-    	model.addAttribute("project", new Project(owner, projectName));
+    	model.addAttribute("branch", branch);
     	model.addAttribute("content", content);
-    	model.addAttribute("subPath", subPath);
+    	model.addAttribute("location", decode(request.getRequestURI()));
+    	model.addAttribute("detail", true);
     	
     	return "web/blob";
     }
@@ -155,26 +178,69 @@ public class ProjectController {
     	}
     }
     
-    @GetMapping("/users/{owner}/{projectName}/find")
-    public String findFiles(@PathVariable String owner, @PathVariable String projectName, Model model) {
+    @GetMapping("/users/{owner}/{projectName}/find/{branch}")
+    public String findFiles(
+    		@PathVariable String owner, 
+    		@PathVariable String projectName, 
+    		@PathVariable String branch,
+    		Model model) {
     	
     	Project project = projectService.findByOwnerAndName(owner, projectName);
     	Long repositoryId = project.getId();
     	List<String> fileList = new ArrayList<>();
-    	fileList = objectStorageService.findFiles(repositoryId);
-    	log.debug("this is file list {}", fileList);
+    	fileList = objectStorageService.findFiles(repositoryId, branch);
     	model.addAttribute("fileList", fileList);
+    	model.addAttribute(branch);
     	model.addAttribute(project);
     	return "web/finder";
     }
   
+    /**
+     * 커밋 히스토리를 시간 순으로 나열
+     * @param owner
+     * @param projectName
+     * @param model
+     * @return
+     */
+    @GetMapping({"/users/{owner}/{projectName}/commits", "/users/{owner}/{projectName}/commits/{branch}"}) 
+    public String commits(
+    		@PathVariable String owner, 
+    		@PathVariable String projectName, 
+    		@PathVariable Optional<String> branch, Model model){
+    	
+    	Project project = projectService.findByOwnerAndName(owner, projectName);
+    	Long repositoryId = project.getId();
+    	String commit = branch.orElse("main");
+    	List<Map<String, String>> commitHistory = objectStorageService.getCommitHistory(repositoryId, commit);
+    	Collections.reverse(commitHistory);
+    	
+    	model.addAttribute(project);
+    	model.addAttribute("commitHistory", commitHistory);
+    	log.debug("commit history =  {}", commitHistory);
+    	return "web/commits";
+    }
+    
+    private Model setTableHeader(Long repositoryId, String branch, Model model) {
+    	List<Map<String, String>> commitHistory = objectStorageService.getCommitHistory(repositoryId, branch);
+		int count = commitHistory.size();
+		Map<String, String> lastCommit = commitHistory.get(count-1);
+		model.addAttribute("commit", lastCommit);
+		model.addAttribute("count", count);
+    	return model;
+    }
+    
     
     private String getObjectURL(HttpServletRequest request) {
     	String 	orgRequest = request.getRequestURI();
     	log.debug("this is requestURI = {}", orgRequest);
-    	int fifthSlash = StringUtils.ordinalIndexOf(orgRequest, "/", 5);
+    	int fifthSlash = StringUtils.ordinalIndexOf(orgRequest, "/", 6);
     	String processed = orgRequest.substring(fifthSlash);
-    	return processed;
+    	log.debug("this is processedURI = {}", processed);
+    	return decode(processed);
+    }
+    
+    private String decode(String uri) {
+    	return URLDecoder.decode(uri,StandardCharsets.UTF_8);
     }
     
 }

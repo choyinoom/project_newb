@@ -1,18 +1,17 @@
 package com.project.myApplication.util;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Objects are compressed when they are stored in git directories
  * @author Owner
  *
  */
+@Slf4j
 public class ZipUtil {
 
 	private static final int BUFFER_SIZE = 1024;
@@ -45,9 +44,9 @@ public class ZipUtil {
 		return result;
 	}
 	
-	public String decompress(byte[] content) {
+	public byte[] decompress(byte[] content) {
 		
-		String result = "";
+		byte[] result = null;
 		Inflater decompresser = new Inflater();
 		decompresser.setInput(content);
 		
@@ -57,31 +56,11 @@ public class ZipUtil {
 				int resultLength = decompresser.inflate(buffer);
 				outputStream.write(buffer, 0, resultLength);
 			}
-			
-//			result = new String(outputStream.toByteArray(), "UTF-8");
-			result = new String(outputStream.toByteArray());
+			result = outputStream.toByteArray();
 		} catch (Exception e) {
-			
+			log.error("decompress 하다가 에러가 났따", e);
 		}
 		
 		return result;
-	}
-	
-	public static void main(String[] args) throws IOException {
-		String path = "D:\\vscode-workspace\\git_test\\.git\\objects\\3c\\4e9cd789d88d8d89c1073707c3585e41b0e614";
-        // String path="E:\\spring-workspace\\uni17_user\\.git\\index";
-        File file = new File(path);
-        FileInputStream fis = new FileInputStream(file);
-        
-        ZipUtil util = new ZipUtil();
-        String test = "d8329fc1cc938780ffdd9f94e0d364e0ea74f579";
-        String result1 = new String(util.compress(test.getBytes()), "UTF-8");
-        System.out.println(result1);
-        String result2 = util.decompress(util.compress(test.getBytes()));
-        System.out.println(result2);
-        
-//        String result = util.decompress(fis.readAllBytes());
-//        System.out.println(result.getBytes().length);
-//        System.out.println(result);
 	}
 }
