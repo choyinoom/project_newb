@@ -12,19 +12,31 @@
     <style>
         .select-menu {
             /* 모달 영역 */
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 99;
             display: flex;
             flex-direction: column;
-            max-height: 66%;
-            padding: 13px;
+            padding: 16px;
+            pointer-events: none;
         }
 
         .select-menu-modal {
             /* 모달 자체*/
+            position: relative;
+            z-index: 99;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            pointer-events: auto;
             color: #808080;
             background-color: #fff;
             border: 1px solid transparent;
             border-bottom: 1px solid #ebddef;
-
+            
             text-align: left;
         }
 
@@ -68,6 +80,15 @@
             font-size: 20px;
         }
 
+        .bg-light {
+            background-color: #FFFFFF!important;
+            border: 1px solid #D0D7DE;
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 18px;
+            padding: 0 7px;
+        }
+        
         @media (min-width: 1012px) {
             .flex-lg-row {
                 flex-direction: row !important;
@@ -90,6 +111,7 @@
                 top: auto;
                 bottom: auto;
                 right: auto;
+                padding: 0;
             }
 
             .select-menu-modal {
@@ -97,7 +119,7 @@
                 border-radius: 6px;
                 font-size: 12px;
                 height: auto;
-                margin: 8px 0 16px;
+                margin: 16px 0 16px 0;
                 max-height: 480px;
                 width: 300px;
 
@@ -133,16 +155,16 @@
             <div class="position-relative" id="search-filter">
                 <div class="border-bottom py-3">
                     <div class="d-flex flex-items-start">
-                        <form class="w-100" id="data-autosearch" action="/choyinoom" method="get">
+                        <form class="w-100" id="data-autosearch" th:action="@{|/users/${owner}|}" method="get">
                             <div class="d-flex flex-column flex-lg-row">
                                 <!-- 텍스트 검색-->
                                 <div class="col flex-auto  mb-1 mb-md-0 mr-md-3">
                                     <input type="search" id="your-repos-filter" name="q" class="w-100 h-100"
-                                        placeholder="Find a repository...">
+                                        placeholder="Find a repository..." autocomplete="off">
                                 </div>
                                 <!-- 버튼으로 필터링-->
                                 <div class="d-flex flex-wrap">
-                                    <details class="mt-2 mt-lg-0 me-1 btn btn-light" id="type-options">
+                                    <details class="mt-2 mt-lg-0 me-1 btn btn-light position-relative" id="type-options">
                                         <summary>Type</summary>
                                         <div class="select-menu right-lg-0" role="menu">
                                             <div class="select-menu-modal">
@@ -153,38 +175,38 @@
                                                 </header>
                                                 <div class="select-menu-list">
                                                     <label class="select-menu-item">
-                                                        <input type="radio" name="type" id="type_" value="All"
-                                                            data-autosubmit="true" checked="checked">
+                                                        <input type="radio" name="type" id="type_" value
+                                                            data-autosubmit="true" th:attr="checked=${type == ''} ? true : false">
                                                         <span class="text-normal">All</span>
                                                     </label>
                                                     <label class="select-menu-item">
                                                         <input type="radio" name="type" id="type_" value="Public"
-                                                            data-autosubmit="true">
+                                                            data-autosubmit="true" th:attr="checked=${type == 'Public'} ? true : false">
                                                         <span class="text-normal">Public</span>
                                                     </label>
                                                     <label class="select-menu-item">
                                                         <input type="radio" name="type" id="type_" value="Private"
-                                                            data-autosubmit="true">
+                                                            data-autosubmit="true" th:attr="checked=${type == 'Private'} ? true : false">
                                                         <span class="text-normal">Private</span>
                                                     </label>
                                                     <label class="select-menu-item">
                                                         <input type="radio" name="type" id="type_" value="Sources"
-                                                            data-autosubmit="true">
+                                                            data-autosubmit="true" disabled>
                                                         <span class="text-normal">Sources</span>
                                                     </label>
                                                     <label class="select-menu-item">
                                                         <input type="radio" name="type" id="type_" value="Forks"
-                                                            data-autosubmit="true">
+                                                            data-autosubmit="true" disabled>
                                                         <span class="text-normal">Forks</span>
                                                     </label>
                                                     <label class="select-menu-item">
                                                         <input type="radio" name="type" id="type_" value="Archived"
-                                                            data-autosubmit="true">
+                                                            data-autosubmit="true" disabled>
                                                         <span class="text-normal">Archived</span>
                                                     </label>
                                                     <label class="select-menu-item">
                                                         <input type="radio" name="type" id="type_" value="Mirrors"
-                                                            data-autosubmit="true">
+                                                            data-autosubmit="true" disabled>
                                                         <span class="text-normal">Mirrors</span>
                                                     </label>
                                                 </div>
@@ -196,6 +218,27 @@
                                     </details>
                                     <details class="mt-1 mt-lg-0 me-1 btn btn-light" id="sort-options">
                                         <summary>Sort</summary>
+                                        <div class="select-menu right-lg-0" role="menu">
+                                            <div class="select-menu-modal">
+                                                <header class="select-menu-header">
+                                                    <span class="select-menu-title">Select order</span>
+                                                    <button class="select-menu-close btn p-0" type="button"
+                                                        data-toggle-for="sort-options">x</button>
+                                                </header>
+                                                <div class="select-menu-list">
+                                                    <label class="select-menu-item">
+                                                        <input type="radio" name="sort" id="sort_" value
+                                                            data-autosubmit="true" th:attr="checked=${sort == ''} ? true : false">
+                                                        <span class="text-normal">Last updated</span>
+                                                    </label>
+                                                    <label class="select-menu-item">
+                                                        <input type="radio" name="sort" id="sort_" value="Name"
+                                                            data-autosubmit="true" th:attr="checked=${sort == 'Name'} ? true : false">
+                                                        <span class="text-normal">Name</span>
+                                                    </label>
+                                                </div>
+                                              </div>
+                                         </div>
                                     </details>
                                 </div>
                             </div>
@@ -221,9 +264,10 @@
                                     <a href="#" th:href="@{|/users/${owner}/${repo.name}|}" th:text="${repo.name}">
                                         Lorem Ipsum
                                     </a>
+                                    <span class="badge rounded-pill bg-light text-dark" th:text="${repo.visibility}"></span>
                                 </h3>
                                 <p th:text="${repo.description}">This is a awesome project.</p>
-                                <p class="mt-1 mb-0">Updated on 2 May</p>
+                                <p class="mt-1 mb-0" th:text="|Updated on ${#temporals.format(repo.updateTime, 'dd MMM YYYY')}|">Updated on 2 May</p>
                             </div>
                         </li>
                     </ul>
@@ -235,25 +279,53 @@
 
 </body>
 <script type="text/javascript">
-    /*select 메뉴 닫기*/
-    let selectMenuClose = document.querySelector(".select-menu-close");
-    selectMenuClose.addEventListener("click", function () {
-        const target = selectMenuClose.getAttribute("data-toggle-for");
-        document.querySelector("#" + target).toggleAttribute("open");
+    /*select 모달 메뉴 닫기*/
+    let selectMenuCloses = document.querySelectorAll(".select-menu-close");
+    selectMenuCloses.forEach(function(menu) {
+    	menu.addEventListener("click", function () { 
+            const target = menu.getAttribute("data-toggle-for");
+            document.querySelector("#" + target).toggleAttribute("open");
+    	})
     })
-
-    const dataAutosearch = document.querySelector('#data-autosearch')
-    dataAutosearch.addEventListener('change', (event) => {
-        console.log(event.target.id);
-        console.log(event.target.value);
-        dataAutosearch.submit();
-        // var data = new FormData(dataAutosearch);
-        // var output = "";
-        // for (const entry of data) {
-        //     output = output + entry[0] + "=" + entry[1] + "\r";
-        // } ;
-        // console.log(output);  
-    })
+    
+    /* select 모달에서 필터 선택 시 즉시 적용 */
+    const dataAutosearch = document.querySelector('#data-autosearch');
+   const events = ['change', 'keyup', 'paste'];
+   const inputHandler = async function(e) {
+   		const searchData = e.target.value.toLowerCase();
+    	const form = e.currentTarget;
+    	const url = new URL(form.action, window.location.origin);
+    	const method = form.method;
+    	const serialized = new URLSearchParams(new FormData(form)).toString();
+    	let body = null;
+    	url.search = serialized;
+    	const request = new Request(url.toString(), {
+    		method,
+    	})
+    	let response;
+    	try {
+    		response = await fetch(request)
+    	} catch {
+    		// Ignore network errors
+    	}
+    	const id = "user-repositories-list";
+    	const resultsContainer = document.getElementById(id);
+    	if (resultsContainer) {
+    		resultsContainer.innerHTML = '';
+    		const result = await response.text();
+    		const parser = new DOMParser();
+    		const htmlDoc = parser.parseFromString(result, 'text/html');
+    		const replace = htmlDoc.getElementById(id).innerHTML.trim();
+    		resultsContainer.innerHTML = replace;
+    		window.history.pushState(null, '', request.url);
+    	}
+    }
+    addMultipleEventListener(dataAutosearch, events, inputHandler);
+    
+    function addMultipleEventListener(element, events, handler) {
+    	events.forEach(e => element.addEventListener(e, handler));
+    }
+    
 </script>
 
 </html>

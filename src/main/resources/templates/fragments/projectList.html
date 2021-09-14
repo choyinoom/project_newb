@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+    <div id="user-repositories-list" class="mt-1" th:fragment="projectList">
+        <ul class="ps-0">
+            <li class="d-flex w-100 col-12 py-3 border-bottom"
+                th:each="repo : ${repos}">
+                <div class="d-inline-block mb-1">
+                    <h3>
+                        <a href="#"
+                            th:href="@{|/users/${owner}/${repo.name}|}"
+                            th:text="${repo.name}"> Lorem Ipsum </a> <span
+                            class="badge rounded-pill bg-light text-dark"
+                            th:text="${repo.visibility}"></span>
+                    </h3>
+                    <p th:text="${repo.description}">This is a
+                        awesome project.</p>
+                    <p class="mt-1 mb-0"
+                        th:text="|Updated on ${#temporals.format(repo.updateTime, 'dd MMM YYYY')}|">Updated
+                        on 2 May</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>
