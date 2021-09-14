@@ -10,7 +10,6 @@ import java.util.TreeMap;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 
-import com.google.protobuf.ByteString;
 import com.project.myApplication.util.HashGenerator;
 
 import lombok.Getter;
@@ -146,12 +145,5 @@ public class Tree implements GitObject{
 	@Override
 	public String getMtime() {
 		return mtime;
-	}
-	
-	public static void main(String[] args) {
-		String str = "\\x1a!l\\xaf\\xe9\\x1fh\\x07\\x06\\xb1\\xfc\\xee8K\\x1c\\x08\\x16T\\xd9\\n";
-		byte[] b = ByteString.copyFromUtf8(str).toByteArray();
-		char[] c = Hex.encodeHex(b);
-		System.out.println(String.valueOf(c));
 	}
 }
