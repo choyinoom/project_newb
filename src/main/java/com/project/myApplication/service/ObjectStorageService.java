@@ -91,7 +91,7 @@ public class ObjectStorageService {
 	 * @param list 커밋한 파일 목록
 	 * @param commit 커밋 메시지와 커밋한 유저에 대한 정보
 	 */
-	public void store(List<FileMetadata> list, Map<String, String> commit) {
+	public ZonedDateTime store(List<FileMetadata> list, Map<String, String> commit) {
 		ZonedDateTime now = util.getTime();
 		try {
 			String repositoryId = commit.get("repositoryId");
@@ -110,6 +110,7 @@ public class ObjectStorageService {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		return now;
 	}
 
 	

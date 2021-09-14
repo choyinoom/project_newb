@@ -1,5 +1,6 @@
 package com.project.myApplication.controller;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -130,7 +131,8 @@ public class FileUploadController {
     	
     	ResponseEntity<Object> response = null;
     	try {
-    		objectStorageService.store(list, paramMap);
+    		ZonedDateTime now = objectStorageService.store(list, paramMap);
+    		projectService.updateProjectUpdateTime(repositoryId, now);
     		response = new ResponseEntity<Object>(null, HttpStatus.CREATED);
     		
     	} catch (Exception e) {

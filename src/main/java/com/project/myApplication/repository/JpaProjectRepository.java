@@ -1,9 +1,15 @@
 package com.project.myApplication.repository;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import com.project.myApplication.domain.Project;
 
@@ -44,4 +50,31 @@ public class JpaProjectRepository implements ProjectRepository{
 		return result.stream().findAny();
 	}
 
+	@Override
+	public void updateUpdateTime(Long id, LocalDateTime local) {
+		Project projectToUpdate = findById(id).get();
+		projectToUpdate.setUpdateTime(local);
+		save(projectToUpdate);
+	}
+
+	@Override
+	public List<Project> findByQuery(String owner, String q, String type) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<Project> cq = cb.createQuery(Project.class);
+		
+		Root<Project> project = cq.from(Project.class);
+		List<Predicate> predicates = new ArrayList<>();
+		predicates.add(cb.equal(project.get("owner"), owner));
+		
+		if(!q.equals("")) {
+			predicates.add(cb.like(cb.upper(project.get("name")), "%" + q.toUpperCase() + "%"));
+		}
+		if (!type.equals("")) {
+			predicates.add(cb.equal(project.get("visibility"), type));
+		}
+		cq.where(predicates.toArray(new Predicate[0]));
+		
+		return em.createQuery(cq).getResultList();
+	}
+	
 }

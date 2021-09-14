@@ -16,8 +16,8 @@ create table project
 	name varchar(255) not null,
 	description varchar(255),
 	visibility varchar(100),
-	create_time varchar(255),
-	update_time varchar(255),
+	create_time timestamp default current_timestamp not null,
+	update_time timestamp default current_timestamp not null,
 	primary key (id)
 );
 

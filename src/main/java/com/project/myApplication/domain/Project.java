@@ -1,8 +1,10 @@
 package com.project.myApplication.domain;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Entity;
-import javax.persistence.GenerationType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import lombok.Data;
@@ -10,7 +12,7 @@ import lombok.NonNull;
 
 @Data
 @Entity
-public class Project {
+public class Project implements Comparable<Project>{
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -19,8 +21,8 @@ public class Project {
 	private String description;
 	@NonNull private String visibility;
 	
-	private String createTime;
-	private String updateTime;
+	private LocalDateTime createTime;
+	private LocalDateTime updateTime;
 	
 	public Project() {
 		
@@ -38,5 +40,9 @@ public class Project {
 		this.name = name;
 	}
 	
+	@Override
+	public int compareTo(Project o) {
+		return o.getUpdateTime().compareTo(this.getUpdateTime());
+	}
 	
 }
