@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="../../static/css/common.css" th:href="@{/css/common.css}" />
+    <link rel="icon" th:href="@{/image/Mooncake-MP.png}" type="image/x-icon" />
+    <title th:text="@{|${owner}/${projectName}|}"></title>
+   
+    <style>
+
+        .file-navigation .btn {
+            
+            font-size: 14px;
+            font-weight: 600;
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+
+        .d-table {
+            padding-bottom: 24px;
+            padding-top: 24px;
+            margin-top: -24px;
+            margin-bottom: -24px;
+        }
+        
+        .d-table-cell {
+            border-bottom: 1px solid #ebedef;
+        }
+
+        .table-holder {
+            border: 1px solid #dbdbdb;
+            border-radius: 5px;
+        }
+
+        table th:nth-child(2) {
+            width: 54% !important;
+        }
+        
+        .root {
+            font-weight: 600!important;
+        }
+    </style>
+</head>
+
+<body>
+    <main id="repo-container">
+        <div th:replace="fragments/header :: header"></div>
+        <div class="container-xl clearfix px-3 px-md-4 px-lg-5">
+            <!-- 콘텐츠 부분-->
+            <div id="repo-content" class="repository-content">
+                <div th:replace="fragments/repo-breadcrumb :: repo-breadcrumb"></div>
+                <!-- 프로젝트 파일 리스트-->
+                <div id="box" th:replace="fragments/table :: table"></div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!----- css ------>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}">
+    <title>Sign in to itHub - itHub</title>
+    <style>
+        .auth-form {
+            margin: 0 auto;
+            width: 340px;
+        }
+
+        .auth-form-header {
+            margin-bottom: 15px;
+            text-align:center;
+        }
+
+        .auth-form-header h1 {
+            color: #24292f;
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: -.5px;
+            line-height: 1.5;
+            opcacity: 0.8;
+        }
+
+        .auth-form-body {
+            background-color: #f6f8fa;
+            border: 1px solid #ebedef;
+            border-radius: 6px;
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        .auth-form-body .input-block {
+            margin-bottom: 15px;
+            margin-top: 5px;
+        }
+
+        .auth-form label {
+            display: block;
+            font-weight: 400px;
+            margin-bottom: 7px;
+            text-align: left;
+        }
+
+        .input-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .auth-form-body .label-link {
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        input[type=submit] {
+            background-color: #2da44e;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 20px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="application-main">
+        <main>
+            <div class="container clearfix w-100 text-center pt-5 pb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                </svg>
+            </div>
+            <div class="auth-form px-3" id="login">
+                <div class="auth-form-header p-0">
+                    <h1>Sign in to itHub</h1>
+                </div>
+                <!-- 로그인 실패 시 생성-->
+                <div th:if="${param.error}">
+                    Invalid username and password.
+                </div>        
+                <div class="auth-form-body mt-3">
+                    <form th:action="@{/login}" accept-charset="UTF-8" method="post">
+                        <label for="login_field"> Username or email address </label>
+                        <input type="text" name="username" id="login_field" autocapitalize="off" autocorrect="off" autocomplete="username" class="input-block">
+                        <div class="position-relative">
+                            <label for="password"> Password </label>
+                            <input type="password" name="password" id="password" autocomplete="current-password" class="input-block d-block">
+                            <input type="submit" name="commit" value="Sign in" class="btn btn-success w-100">
+                            <a class="label-link position-absolute top-0 end-0" tabindex="0" href="#">Forgot password?</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

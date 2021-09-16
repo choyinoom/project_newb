@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" href="../../static/css/common.css" th:href="@{/css/common.css}">
+    <link rel="icon" th:href="@{/image/Mooncake-MP.png}" type="image/x-icon" />
+    <title>Your Repositories</title>
+    <style>
+        .select-menu {
+            /* 모달 영역 */
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 99;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            pointer-events: none;
+        }
+
+        .select-menu-modal {
+            /* 모달 자체*/
+            position: relative;
+            z-index: 99;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            pointer-events: auto;
+            color: #808080;
+            background-color: #fff;
+            border: 1px solid transparent;
+            border-bottom: 1px solid #ebddef;
+            
+            text-align: left;
+        }
+
+        #your-repos-filter {
+            padding: 5px 12px;
+            vertical-align: middle;
+            outline: none;
+        }
+
+        .select-menu-header {
+            /* 모달 헤더*/
+            align-items: center;
+            border-bottom: 1px solid #ebddef;
+            display: flex;
+            flex: none;
+        }
+
+        .select-menu-title {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .select-menu-item {
+            align-items: center;
+            border: 0;
+            border-bottom: 1px solid #ebddef;
+            color: #24292e;
+            cursor: pointer;
+            display: flex;
+            overflow: hidden;
+            padding: 16px;
+            width: 100%;
+        }
+
+        .select-menu-item input[type="radio"] {
+            margin-right: 8px;
+        }
+
+        #user-repositories-list h3 {
+            font-size: 20px;
+        }
+
+        .bg-light {
+            background-color: #FFFFFF!important;
+            border: 1px solid #D0D7DE;
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 18px;
+            padding: 0 7px;
+        }
+        
+        @media (min-width: 1012px) {
+            .flex-lg-row {
+                flex-direction: row !important;
+            }
+
+            .right-lg-0 {
+                right: 0 !important;
+
+            }
+
+            .mt-lg-0 {
+                margin-top: 0 !important;
+            }
+        }
+
+        @media (min-width: 544px) {
+            .select-menu {
+                position: absolute;
+                left: auto;
+                top: auto;
+                bottom: auto;
+                right: auto;
+                padding: 0;
+            }
+
+            .select-menu-modal {
+                border-color: #e1e4e8;
+                border-radius: 6px;
+                font-size: 12px;
+                height: auto;
+                margin: 16px 0 16px 0;
+                max-height: 480px;
+                width: 300px;
+
+            }
+
+            .select-menu-header {
+                padding: 7px 7px 7px 16px;
+            }
+
+            .select-menu-title {
+                font-size: inherit;
+            }
+
+            .select-menu-item {
+                padding-bottom: 7px;
+                padding-top: 7px;
+            }
+
+            .mb-md-0 {
+                margin-bottom: 0 !important;
+            }
+
+            .mr-md-3 {
+                margin-right: 16px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="container-xl my-5">
+            <div class="position-relative" id="search-filter">
+                <div class="border-bottom py-3">
+                    <div class="d-flex flex-items-start">
+                        <form class="w-100" id="data-autosearch" th:action="@{|/users/${owner}|}" method="get">
+                            <div class="d-flex flex-column flex-lg-row">
+                                <!-- 텍스트 검색-->
+                                <div class="col flex-auto  mb-1 mb-md-0 mr-md-3">
+                                    <input type="search" id="your-repos-filter" name="q" class="w-100 h-100"
+                                        placeholder="Find a repository..." autocomplete="off">
+                                </div>
+                                <!-- 버튼으로 필터링-->
+                                <div class="d-flex flex-wrap">
+                                    <details class="mt-2 mt-lg-0 me-1 btn btn-light position-relative" id="type-options">
+                                        <summary>Type</summary>
+                                        <div class="select-menu right-lg-0" role="menu">
+                                            <div class="select-menu-modal">
+                                                <header class="select-menu-header">
+                                                    <span class="select-menu-title">Select type</span>
+                                                    <button class="select-menu-close btn p-0" type="button"
+                                                        data-toggle-for="type-options">x</button>
+                                                </header>
+                                                <div class="select-menu-list">
+                                                    <label class="select-menu-item">
+                                                        <input type="radio" name="type" id="type_" value
+                                                            data-autosubmit="true" th:attr="checked=${type == ''} ? true : false">
+                                                        <span class="text-normal">All</span>
+                                                    </label>
+                                                    <label class="select-menu-item">
+                                                        <input type="radio" name="type" id="type_" value="Public"
+                                                            data-autosubmit="true" th:attr="checked=${type == 'Public'} ? true : false">
+                                                        <span class="text-normal">Public</span>
+                                                    </label>
+                                                    <label class="select-menu-item">
+                                                        <input type="radio" name="type" id="type_" value="Private"
+                                                            data-autosubmit="true" th:attr="checked=${type == 'Private'} ? true : false">
+                                                        <span class="text-normal">Private</span>
+                                                    </label>
+                                                    <label class="select-menu-item">
+                                                        <input type="radio" name="type" id="type_" value="Sources"
+                                                            data-autosubmit="true" disabled>
+                                                        <span class="text-normal">Sources</span>
+                                                    </label>
+                                                    <label class="select-menu-item">
+                                                        <input type="radio" name="type" id="type_" value="Forks"
+                                                            data-autosubmit="true" disabled>
+                                                        <span class="text-normal">Forks</span>
+                                                    </label>
+                                                    <label class="select-menu-item">
+                                                        <input type="radio" name="type" id="type_" value="Archived"
+                                                            data-autosubmit="true" disabled>
+                                                        <span class="text-normal">Archived</span>
+                                                    </label>
+                                                    <label class="select-menu-item">
+                                                        <input type="radio" name="type" id="type_" value="Mirrors"
+                                                            data-autosubmit="true" disabled>
+                                                        <span class="text-normal">Mirrors</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </details>
+                                    <details class="mt-1 mt-lg-0 me-1 btn btn-light" id="language-options">
+                                        <summary>Language</summary>
+                                    </details>
+                                    <details class="mt-1 mt-lg-0 me-1 btn btn-light" id="sort-options">
+                                        <summary>Sort</summary>
+                                        <div class="select-menu right-lg-0" role="menu">
+                                            <div class="select-menu-modal">
+                                                <header class="select-menu-header">
+                                                    <span class="select-menu-title">Select order</span>
+                                                    <button class="select-menu-close btn p-0" type="button"
+                                                        data-toggle-for="sort-options">x</button>
+                                                </header>
+                                                <div class="select-menu-list">
+                                                    <label class="select-menu-item">
+                                                        <input type="radio" name="sort" id="sort_" value
+                                                            data-autosubmit="true" th:attr="checked=${sort == ''} ? true : false">
+                                                        <span class="text-normal">Last updated</span>
+                                                    </label>
+                                                    <label class="select-menu-item">
+                                                        <input type="radio" name="sort" id="sort_" value="Name"
+                                                            data-autosubmit="true" th:attr="checked=${sort == 'Name'} ? true : false">
+                                                        <span class="text-normal">Name</span>
+                                                    </label>
+                                                </div>
+                                              </div>
+                                         </div>
+                                    </details>
+                                </div>
+                            </div>
+                        </form>
+                        <div>
+                            <a href="new.html" th:href="@{/new}" class="btn btn-success ms-1 d-flex align-items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-journal-bookmark me-1" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M6 8V1h1v6.117L8.743 6.07a.5.5 0 0 1 .514 0L11 7.117V1h1v7a.5.5 0 0 1-.757.429L9 7.083 6.757 8.43A.5.5 0 0 1 6 8z"/>
+                                    <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/>
+                                    <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/>
+                                  </svg>
+                                New
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="user-repositories-list" class="mt-1">
+                    <ul class="ps-0">
+                        <li class="d-flex w-100 col-12 py-3 border-bottom" th:each="repo : ${repos}">
+                            <div class="d-inline-block mb-1">
+                                <h3>
+                                    <a href="#" th:href="@{|/users/${owner}/${repo.name}|}" th:text="${repo.name}">
+                                        Lorem Ipsum
+                                    </a>
+                                    <span class="badge rounded-pill bg-light text-dark" th:text="${repo.visibility}"></span>
+                                </h3>
+                                <p th:text="${repo.description}">This is a awesome project.</p>
+                                <p class="mt-1 mb-0" th:text="|Updated on ${#temporals.format(repo.updateTime, 'dd MMM YYYY')}|">Updated on 2 May</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+<script type="text/javascript">
+    /*select 모달 메뉴 닫기*/
+    let selectMenuCloses = document.querySelectorAll(".select-menu-close");
+    selectMenuCloses.forEach(function(menu) {
+    	menu.addEventListener("click", function () { 
+            const target = menu.getAttribute("data-toggle-for");
+            document.querySelector("#" + target).toggleAttribute("open");
+    	})
+    })
+    
+    /* select 모달에서 필터 선택 시 즉시 적용 */
+    const dataAutosearch = document.querySelector('#data-autosearch');
+   const events = ['change', 'keyup', 'paste'];
+   const inputHandler = async function(e) {
+   		const searchData = e.target.value.toLowerCase();
+    	const form = e.currentTarget;
+    	const url = new URL(form.action, window.location.origin);
+    	const method = form.method;
+    	const serialized = new URLSearchParams(new FormData(form)).toString();
+    	let body = null;
+    	url.search = serialized;
+    	const request = new Request(url.toString(), {
+    		method,
+    	})
+    	let response;
+    	try {
+    		response = await fetch(request)
+    	} catch {
+    		// Ignore network errors
+    	}
+    	const id = "user-repositories-list";
+    	const resultsContainer = document.getElementById(id);
+    	if (resultsContainer) {
+    		resultsContainer.innerHTML = '';
+    		const result = await response.text();
+    		const parser = new DOMParser();
+    		const htmlDoc = parser.parseFromString(result, 'text/html');
+    		const replace = htmlDoc.getElementById(id).innerHTML.trim();
+    		resultsContainer.innerHTML = replace;
+    		window.history.pushState(null, '', request.url);
+    	}
+    }
+    addMultipleEventListener(dataAutosearch, events, inputHandler);
+    
+    function addMultipleEventListener(element, events, handler) {
+    	events.forEach(e => element.addEventListener(e, handler));
+    }
+    
+</script>
+
+</html>

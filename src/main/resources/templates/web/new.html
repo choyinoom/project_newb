@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" type="text/css" href="../../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}"> 
+    <link rel="stylesheet" type="text/css" href="../../static/css/common.css" th:href="@{/css/common.css}">
+    <link rel="icon" th:href="@{/image/Mooncake-MP.png}" type="image/x-icon" />
+    
+    <title>Create a New Repository</title>
+    <style>
+        .container {
+            max-width: 780px;
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+
+        .Subhead-heading {
+            flex: 1 1 auto;
+            font-size: 24px;
+            font-weight: 400;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="container">
+            <form class="repo-form" id="new-repository" action="/new" method="post">
+                <div>
+                    <h1 class="Subhead-heading"> Create a new repository</h1>
+                    <hr>
+                </div>
+                <div class="owner-reponame clearfix">
+                    <div th:if="${param.status}"  class="alert alert-warning" role="alert">
+                      레파지토리 이름이 유효하지 않습니다.
+                    </div>
+                    <dl class="form-group float-start mt-1 mb-0">
+                        <dt class="form-group-header">
+                            <label id="repository-owner-label" for="repository-owner">
+                                Owner
+                            </label>
+                        </dt>
+                        <dd class="form-group-body">
+                            <input class="repo-owner" type="text" name="owner" id="repository_owner"
+                                th:value="${username}" value="user" readonly>
+                        </dd>
+                    </dl>
+                    <span class="float-start pt-4 mx-2 mt-1" style="font-size: 24px">/</span>
+                    <dl class="form-group float-start mt-1 mb-0">
+                        <dt class="form-group-header">
+                            <label id="repository-name" for="repository-name">
+                                Repository name
+                            </label>
+                        </dt>
+                        <dd>
+                            <input maxlength="100" class="repo-name" type="text" name="name" id="repository_name" required>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="permission-fields">
+                    <p class="my-2 mt-0" id="repo-name-suggestion">
+                        Great repository names are short and memorable.
+                    </p>
+                    <!-- description field-->
+                    <dl class="form-group">
+                        <dt>
+                            <label for="repository_description">
+                                "Description "
+                                <span class="note">(optional)</span>
+                            </label>
+                        </dt>
+                        <dd>
+                            <input class="w-100" type="text" name="description" id="repository_description">
+                        </dd>
+                    </dl>
+                </div>
+                <hr>
+                <div class="form-visibility">
+                    <div class="form-checkbox">
+                        <label>
+                            <input class="mt-2" type="radio" value="Public" checked="checked" name="visibility"
+                                id="repository_visibility_public">
+                            Public
+                        </label>
+
+                    </div>
+                    <div class="form-checkbox">
+                        <label>
+                            <input class="mt-2" type="radio" value="Private" name="visibility"
+                                id="repository_visibility_public">
+                            Private
+                        </label>
+                    </div>
+                </div>
+                <hr>
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button type="submit" class="btn-success btn"> Create repository</button>
+            </form>
+        </div>
+
+    </main>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="../../static/css/common.css" th:href="@{/css/common.css}" />
+    <link rel="icon" th:href="@{/image/Mooncake-MP.png}" type="image/x-icon" />
+    <title th:text="@{|${projectName}|}"></title>
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.0.min.js}"></script>
+    
+    <style>
+    
+        ::selection {
+          background-color: #fd7e14; /*Highlight Color*/
+          color: #fff; /*Text Color*/
+        }
+        .file-content.code .line-numbers {
+            padding: 10px;
+            text-align: right;
+            float: left;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .file-content.code .line-numbers a {
+            font-family: "Menlo", "DejaVu Sans Mono", "Liberation Mono", "Consolas", "Ubuntu Mono", "Courier New", "andale mono", "lucida console", monospace;
+            display: flex;
+            justify-content: flex-end;
+            font-size: 90% !important;
+            white-space: nowrap;
+        }
+
+        .file-content.code pre {
+            padding: 10px 0;
+            border: 0;
+            border-radius: 0 0 4px;
+            font-family: "Menlo", "DejaVu Sans Mono", "Liberation Mono", "Consolas", "Ubuntu Mono", "Courier New", "andale mono", "lucida console", monospace;
+            font-size: 90%;
+            line-height: 1.5;
+            margin: 0;
+            overflow: auto;
+            overflow-y: hidden;
+            white-space: pre;
+            word-wrap: normal;
+            border-left: 1px solid;
+        }
+        
+        .file-content.code pre code {
+            display: inline-block;
+            min-width: 100%;
+            font-family: "Menlo", "DejaVu Sans Mono", "Liberation Mono", "Consolas", "Ubuntu Mono", "Courier New", "andale mono", "lucida console", monospace;
+            white-space: normal;
+            word-wrap: normal;
+            padding: 0;
+        }
+        
+        
+        .file-content.code pre code .line {
+            display: block;
+            width: 100%;
+            padding-left: 10px;
+            padding-right: 10px;
+            white-space: pre;
+        } 
+        
+        
+        .file-content.code pre .line,
+        .file-content.code .line-numbers a {
+            font-size: 0.8125rem;
+            line-height: 1.1875rem;
+            min-height: 1.1875rem;
+        }
+        
+        .root {
+            font-weight: 600!important;
+        }
+        
+        .memo {
+            position: absolute;
+            display:none;
+        }
+        
+        button[data-bs-toggle] {
+            position: absolute;
+            top: 20px;
+            right: 660px;
+        }
+        
+        #story {
+            width:370px;
+            min-height: 800px;
+        }     
+         
+    </style>
+</head>
+<body>
+    <main id="page-container">
+        <div th:replace="fragments/header :: header"></div>
+        <div class="container-xl clearfix px-3 px-md-4 px-lg-5">
+            <div class="repository-content">
+                <div th:replace="fragments/repo-breadcrumb :: repo-breadcrumb"></div>
+                <div class="blob-viewer">
+                    <div class="file-content code" id="blob-content">
+                        <div class="line-numbers">
+                            <a th:each="line, iStat : ${content}" th:id="|L${iStat.index+1}|" >
+                                <span th:text="${iStat.index+1}"></span>
+                            </a>
+                            
+                        </div>
+                        <div class="blob-content">
+                            <pre class="code highlight">
+<code>
+<span th:each="line, iStat : ${content}" th:id="|LC${iStat.index+1}|" class="line"><span class="nn" th:text="${line}"></span></span>
+</code>
+                            </pre>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">🧐</button>
+        <div class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasScrollingLabel">메모장</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <form method="post" th:action="@{|/users/${project.owner}/${project.name}/memo|}"> 
+                    <textarea id="story" name="story" class="mb-2" placeholder="메모를 작성하세요"></textarea>
+                    <div>
+                        <input class="btn btn-primary" name="submit" type="submit" value="저장">
+                        <input class="btn btn-primary" name="cancle" type="button" value="취소">
+                    </div>
+                </form>
+            </div>
+        </div>
+       <!--  <a tabindex=0 class="btn btn-sm btn-warning memo" role="button" title="awesome">
+        👀
+        </a> -->
+    </main>
+
+</body>
+<script type="text/javascript" th:src="@{/js/bootstrap.bundle.min.js}"></script>
+
+</html>

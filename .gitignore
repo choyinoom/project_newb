@@ -1,0 +1,23 @@
+*.properties
+.git/
+
+### gradle ###
+HELP.md
+.gradle
+build/
+gradle/wrapper/gradle-wrapper.jar
+
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+
+
+### VS Code ###
+.vscode/
