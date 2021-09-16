@@ -170,7 +170,7 @@ public class ProjectController {
     		objectStorageService.init(id);
             redirectAttributes.addAttribute("projectName", project.getName());
             redirectAttributes.addAttribute("owner",project.getOwner());
-            redirectAttributes.addAttribute("status", true);
+            redirectAttributes.addFlashAttribute("status", true);
             return "redirect:/users/{owner}/{projectName}";
     	} catch (IllegalStateException e) {
     		redirectAttributes.addAttribute("status", false);
