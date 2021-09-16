@@ -10,7 +10,7 @@
         <div th:if="${detail == true}" id="path" class="flex-1 mx-2 align-self-center fs-6">
         <div class="d-none d-sm-block">
             <span class="root path-segment d-inline-block wb-break-all">
-                <a th:href="@{|/users/${owner}/${project.name}|}" th:text=${project.name}></a>
+                <a th:text=${project.name}></a>
             </span>
             <span class="separator mx-1">/</span>
         </div>
@@ -33,9 +33,12 @@
 
             	let tree_path_children = tree_path.children.item(0);
             	let template = tree_path_children.innerHTML.trim();
-            	const subPath = [[${location}]];
+            	/*<![CDATA=[*/
+            	const subPath = /*[[${location}]]*/null;
+            	/*]]>*/
             	const subPathArray = subPath.split("/");
 				const prefix = subPathArray.filter((e, index) => index < 6).join("/").replace("blob", "tree");
+            	document.querySelector(".root a").href = prefix;
 	            for (var i = 6; i < subPathArray.length; i++) {
                 	let tempDiv = document.createElement("div");
                 	tempDiv.innerHTML = template;
