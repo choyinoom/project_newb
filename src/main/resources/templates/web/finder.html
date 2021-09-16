@@ -94,22 +94,22 @@
      <script src="../../static/js/bootstrap.bundle.min.js" th:src="@{/js/bootstrap.bundle.min.js}"></script>
      <script type="text/javascript">
      	let treeFinderInput = document.querySelector(".tree-finder-input");
-     	treeFinderInput.addEventListener("click", function() {
-     		treeFinderInput.addEventListener("keyup", (e) => {
-     			let searchData = e.target.value.toLowerCase();
-     			console.log(searchData);
-     			let treeItems = document.querySelectorAll("main li");
-     			treeItems.forEach(item => {
-     				if (item.querySelector("span").innerText.toLowerCase().includes(searchData)) {
-     					item.classList.remove("d-none");
-     					item.classList.add("d-block");
-     				} else {
-     					item.classList.remove("d-block");
-     					item.classList.add("d-none");
-     				}
-     			})
-     		})
-     	})
+     	const handler = function(e) {
+     		let searchData = e.target.value.toLowerCase();
+ 			let treeItems = document.querySelectorAll("main li");
+ 			treeItems.forEach(item => {
+ 				if (item.querySelector("span").innerText.toLowerCase().includes(searchData)) {
+ 					item.classList.remove("d-none");
+ 					item.classList.add("d-block");
+ 				} else {
+ 					item.classList.remove("d-block");
+ 					item.classList.add("d-none");
+ 				}
+ 			});     		
+     	}
+     	const events = ['change', 'keyup', 'paste', 'focus'];
+     	events.forEach(e => treeFinderInput.addEventListener(e, handler));
+     			
      </script>   
 </body>
 </html>
