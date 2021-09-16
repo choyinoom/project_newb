@@ -1,25 +1,33 @@
 package com.project.myApplication.repository;
 
-import java.util.Map;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.AfterEach;
+import java.time.LocalDateTime;
+
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import com.project.myApplication.domain.Project;
-import static org.assertj.core.api.Assertions.assertThat;
+
+@SpringBootTest
+@Transactional
 public class ProjectRepositoryTest {
 
+	@Autowired ProjectRepository projectRepository;
 	
-	@AfterEach
-	void afterEach() {
-	}
 	
 	@Test
-	void save() {
+	void 시간업데이트테스트() {
 		//given
-		
+		LocalDateTime now = LocalDateTime.now();
 		//when
+		projectRepository.updateUpdateTime(2L, now);
 		
 		//then
+		Project project = projectRepository.findById(2L).get();
+		assertEquals(project.getUpdateTime(), now);
 	}
 }
