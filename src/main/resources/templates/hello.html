@@ -6,6 +6,7 @@
     </head>
     <body>
         <h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+        <p> please click <a th:href="@{'/users/'+${#authentication.name}}">here</a> to see your repositories.</p>
         <form th:action="@{/logout}" method="post">
             <input type="submit" value="Sign Out"/>
         </form>

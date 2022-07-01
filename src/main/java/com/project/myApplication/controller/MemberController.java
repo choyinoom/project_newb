@@ -42,6 +42,11 @@ public class MemberController {
     public String login(HttpServletRequest request) {
          return "login";
     }
+    
+    @GetMapping("/hello")
+    public String hello(HttpServletRequest request) {
+    	return "hello";
+    }
 
     @RequestMapping(
     		value = "/users/{username}", 

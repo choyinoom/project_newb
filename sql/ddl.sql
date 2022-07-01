@@ -21,10 +21,6 @@ create table project
 	primary key (id)
 );
 
-insert into project(owner, name, description, visibility, createtime)
-values('choyi', 'first-project', 'this is my first project', 'public', '202108241730'),
-('choyi', 'second-project', 'Lorem Ipsum awesome project', 'public', '202108241732'),
-('choyi', 'third-project', 'java web application', 'public', '202108241736');
 
 drop table if exists FILE_METADATA CASCADE;
 create table FILE_METADATA
@@ -39,3 +35,10 @@ create table FILE_METADATA
 	directory varchar(255),
 	primary key (id)
 );
+
+insert into project(owner, name, description, visibility, create_time)
+values('choyi', 'first-project', 'this is my first project', 'public', parseDateTime('20210824173000', 'yyyyMMddHHmmss')),
+('choyi', 'second-project', 'Lorem Ipsum awesome project', 'public', parseDateTime('20210824173200', 'yyyyMMddHHmmss')),
+('choyi', 'third-project', 'java web application', 'public', parseDateTime('20210824173400', 'yyyyMMddHHmmss'));
+
+insert into member(email, username, password) values('mchoisay@gmail.com', 'choyi', '1234');
