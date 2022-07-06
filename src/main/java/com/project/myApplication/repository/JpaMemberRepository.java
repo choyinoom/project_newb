@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import javax.persistence.EntityManager;
 
-import com.project.myApplication.domain.Member;
+import com.project.myApplication.domain.member.Member;
 
 public class JpaMemberRepository implements MemberRepository {
 
@@ -26,12 +26,12 @@ public class JpaMemberRepository implements MemberRepository {
 	}
 	
 	public List<Member> findAll() {
-		return em.createQuery("select m from Member m", Member.class)
+		return em.createQuery("select m from MEMBERS m", Member.class)
 				.getResultList();
 	}
 	
 	public Optional<Member> findByUsername(String username) {
-		List<Member> result = em.createQuery("select m from Member m where m.username = :username", Member.class)
+		List<Member> result = em.createQuery("select m from MEMBERS m where m.username = :username", Member.class)
 				.setParameter("username", username)
 				.getResultList();
 		return result.stream().findAny();

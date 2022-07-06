@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import com.project.myApplication.domain.Member;
+import com.project.myApplication.domain.member.Member;
 import com.project.myApplication.repository.MemberRepository;
 
 @Transactional

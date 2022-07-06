@@ -3,7 +3,7 @@ package com.project.myApplication.repository;
 import java.util.List;
 import java.util.Optional;
 
-import com.project.myApplication.domain.Member;
+import com.project.myApplication.domain.member.Member;
 
 public interface MemberRepository {
 
