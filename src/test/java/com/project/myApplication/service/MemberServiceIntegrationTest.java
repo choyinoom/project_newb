@@ -9,12 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.project.myApplication.domain.Member;
+import com.project.myApplication.domain.member.Member;
 import com.project.myApplication.repository.MemberRepository;
 
 @SpringBootTest
 @Transactional  
-
 public class MemberServiceIntegrationTest {
 
 	@Autowired MemberService memberService;
@@ -24,8 +23,11 @@ public class MemberServiceIntegrationTest {
 	public void 회원가입() throws Exception {
 		
 		//Given
-		Member member = new Member();
-		member.setUsername("hello");
+		Member member = Member.builder()
+            .username("delinesa")
+            .password("1234")
+            .email("delinesa@gmail.com")
+            .build();
 		
 		//When
 		Long saveId = memberService.join(member);
@@ -39,11 +41,17 @@ public class MemberServiceIntegrationTest {
 	public void 중복_회원_예외() throws Exception {
 		
 		//Given
-		Member member1 = new Member();
-		member1.setUsername("ruby");
+		Member member1 = Member.builder()
+            .username("delinesa")
+            .password("1234")
+            .email("delinesa@gmail.com")
+            .build();
 		
-		Member member2 = new Member();
-		member2.setUsername("ruby");
+            Member member2 = Member.builder()
+            .username("delinesa")
+            .password("4321")
+            .email("delinesa@naver.com")
+            .build();
 		
 		//When
 		memberService.join(member1);
