@@ -19,4 +19,4 @@ We need to configure database first. Please follow directions below.
 &nbsp; 1. Open H2 console and create a new database from **[this](./sql/ddl.sql)** script.  
 &nbsp; 2. Check **application.properties** file if you want to define other connection attributes.  
 
-😭 user whose information is set in [this](src\main\java\com\project\myApplication\WebSecurityConfig.java) file can only access his/her repositories. It's totally not secure. Sorry for your inconvenience.
+JDBC Authentication is now available. But still, you have to insert data into table MEMBERS manually. Passwords have to encrypted by BCryptPasswordEncoder.
